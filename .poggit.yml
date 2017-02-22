@@ -1,0 +1,8 @@
+--- # Poggit-CI Manifest. Open the CI at https://poggit.pmmp.io/ci/poggit-orphanage/WorldProtect
+branches:
+- master
+projects:
+  WorldProtect:
+    path: ""
+    icon: worldprotect.png
+...
