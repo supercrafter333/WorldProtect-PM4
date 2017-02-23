@@ -63,7 +63,6 @@ class BanItem extends BaseWp implements Listener {
 			return true;
 		}
 		$cc = 0;
-		//echo __METHOD__.",".__LINE__."\n";//##DEBUG
 
 		$ids = $this->owner->getCfg($world, "banitem", []);
 		if ($scmd == "unbanitem") {
@@ -99,6 +98,7 @@ class BanItem extends BaseWp implements Listener {
 	public function onInteract(PlayerInteractEvent $ev) {
 		if ($ev->isCancelled()) return;
 		$pl = $ev->getPlayer();
+                if ($pl->hasPermission("wp.banitem.exempt")) return;
 		$world = $pl->getLevel()->getName();
 		if (!isset($this->wcfg[$world])) return;
 		$item = $ev->getItem();

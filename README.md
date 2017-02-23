@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/Muirfield/WorldProtect/master/media/WorldProtect-icon.png" style="width:64px;height:64px" width="64" height="64"/>
+<img src="https://raw.githubusercontent.com/alejandroliu/pocketmine-plugins/master/Media/WorldProtect-icon.png" style="width:64px;height:64px" width="64" height="64"/>
 
 <!-- meta:Categories = Anti-Griefing -->
 <!-- meta:PluginAccess = Commands, Data Saving, World Editing -->
@@ -7,11 +7,12 @@
 # WorldProtect
 
 - Summary: protect worlds from griefers, pvp, limits and borders
-- PocketMine-MP version: 1.4 (API:1.10.0), 1.5 (API:1.12.0)
+- PocketMine-MP version: 1.4 (API:1.10.0), 1.5 (API:1.12.0), 1.6+php7 (API:2.0.0)
 - DependencyPlugins: 
 - OptionalPlugins: 
 - Categories: Anti-Griefing 
 - Plugin Access: Commands, Data Saving, World Editing 
+- WebSite: https://github.com/Muirfield/pocketmine-plugins/tree/master/WorldProtect
 
 <!-- end-include -->
 
@@ -20,7 +21,7 @@
 <!-- php: $v_forum_thread = "http://forums.pocketmine.net/threads/worldprotect.7517/"; -->
 <!-- template: prologue.md -->
 
-**DO NOT POST QUESTION/BUG-REPORTS/REQUESTS IN THE REVIEWS**
+**DO NOT POST QUESTIONS/BUG-REPORTS/REQUESTS IN THE REVIEWS**
 
 It is difficult to carry a conversation in the reviews.  If you
 have a question/bug-report/request please use the
@@ -29,8 +30,13 @@ that.  You are more likely to get a response and help that way.
 
 _NOTE:_
 
-This documentation was last updated for version **2.2.0**.
+This documentation was last updated for version **2.3.0**.
 
+Please go to
+[github](https://github.com/Muirfield/pocketmine-plugins/tree/master/WorldProtect)
+for the most up-to-date documentation.
+
+You can also download this plugin from this [page](https://github.com/Muirfield/pocketmine-plugins/releases/tag/WorldProtect-2.3.0).
 
 <!-- end-include -->
 
@@ -40,7 +46,6 @@ Features:
 
 <!-- snippet:features -->
 * Ban commands on a per world basis
-* Ban specific items in a world
 * Per world game modes
 * Limit the number of players in a world
 * Control explosions per world
@@ -49,6 +54,7 @@ Features:
 * Automatically displayed/per world MOTD
 * Protect worlds from building/block breaking
 * Per World PvP
+* Ban specific items in a world
 <!-- end-include -->
 
 All commands require a _world_ name to be given, otherwise a default
@@ -99,11 +105,6 @@ specified in the _server.properties_ file.
 This plugin let's you limit what happens in a world.
 
 <!-- snippet: docs -->
-Some items are able to modify a world by being consume (i.e. do not
-need to be placed).  For example, _bonemeal_, _water or lava buckets_.
-To prevent this type of griefing, you can use the **banitem**
-feature.
-
 It is possible to create limits in your limitless worlds.
 So players are not able to go beyond a preset border.  This is
 useful if you want to avoid overloading the server by
@@ -121,6 +122,11 @@ blocks.  Worlds have three protection levels:
   players with **wp.cmd.protect.auth** permission can place/break
   blocks.
 * lock - nobody (even *ops*) is allowed to place/break blocks.
+
+Some items are able to modify a world by being consume (i.e. do not
+need to be placed).  For example, _bonemeal_, _water or lava buckets_.
+To prevent this type of griefing, you can use the **banitem**
+feature.
 
 <!-- end-include -->
 
@@ -307,6 +313,7 @@ If **true** the feature is enabled.  if **false** the feature is disabled.
 * wp.cmd.unbreakable (op): Modify unbreakable block list
 * wp.cmd.bancmd (op): Ban/unban commands
 * wp.cmd.banitem (op): Ban/unban items
+* wp.banitem.exempt (disabled): it is able to use banned items
 * wp.cmd.info: Show WP config info
 * wp.cmd.gm (op): Allow setting a per-world gamemode
 * wp.cmd.gm.exempt (disabled): Users with this permissions will ignore per world gm
@@ -318,6 +325,10 @@ If **true** the feature is enabled.  if **false** the feature is disabled.
 * World names can not contain spaces.
 * When going from survival to creative then back to survival inventory
   contents get lost.
+
+### Features Requested
+
+* Tim // robske Büba: BanItem can ban items per {item-id}:{meta-data}
 
 <!-- template: gd2/mctxt.md -->
 
@@ -332,7 +343,7 @@ languages currently available are:
 
 You can provide your own message file by creating a file called
 **messages.ini** in the plugin config directory.
-Check [github](https://github.com/alejandroliu/pocketmine-plugins/tree/master/WorldProtect/resources/messages/)
+Check [github](https://github.com/Muirfield/pocketmine-plugins/tree/master/WorldProtect/resources/messages/)
 for sample files.
 Alternatively, if you have
 [GrabBag](http://forums.pocketmine.net/plugins/grabbag.1060/) v2.3
@@ -365,6 +376,9 @@ Returns an integer or null.
 
 # Changes
 
+* 2.3.0: Updated to API 2.0.0
+  - Added banitem exempted permissions (@BobbyTowers)
+  - Closes #47 (@SleepSpace9)
 * 2.2.0: minor Update
   - Implemented banned commands (@Tolo)
   - Documentation update

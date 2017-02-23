@@ -1,10 +1,13 @@
 <?php
+//= api-features
+//: - Player session and state management
 
 namespace aliuly\worldprotect\common;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\plugin\PluginBase;
-use pocketmine\command\CommandSender;
+
+use aliuly\worldprotect\common\MPMU;
 
 /**
  * Basic Session Manager functionality
@@ -27,7 +30,7 @@ class Session implements Listener {
    * @param PlayerQuitEvent $ev - Quit event
 	 */
 	public function onPlayerQuit(PlayerQuitEvent $ev) {
-		$n = strtolower($ev->getPlayer()->getName());
+		$n = MPMU::iName($ev->getPlayer());
 		if (isset($this->state[$n])) unset($this->state[$n]);
 	}
   /**
@@ -39,8 +42,7 @@ class Session implements Listener {
 	 * @return mixed
 	 */
 	public function getState($label,$player,$default) {
-		if ($player instanceof CommandSender) $player = $player->getName();
-		$player = strtolower($player);
+    $player = MPMU::iName($player);
 		if (!isset($this->state[$player])) return $default;
 		if (!isset($this->state[$player][$label])) return $default;
 		return $this->state[$player][$label];
@@ -54,8 +56,7 @@ class Session implements Listener {
 	 * @return mixed
 	 */
 	public function setState($label,$player,$val) {
-		if ($player instanceof CommandSender) $player = $player->getName();
-		$player = strtolower($player);
+    $player = MPMU::iName($player);
 		if (!isset($this->state[$player])) $this->state[$player] = [];
 		$this->state[$player][$label] = $val;
 		return $val;
@@ -67,8 +68,7 @@ class Session implements Listener {
 	 * @param Player|str $player - intance of Player or their name
 	 */
 	public function unsetState($label,$player) {
-		if ($player instanceof CommandSender) $player = $player->getName();
-		$player = strtolower($player);
+    $player = MPMU::iName($player);
 		if (!isset($this->state[$player])) return;
 		if (!isset($this->state[$player][$label])) return;
 		unset($this->state[$player][$label]);

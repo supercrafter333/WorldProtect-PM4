@@ -1,11 +1,14 @@
 <?php
+//= api-features
+//: - API version checking
+//: - Misc shorcuts and pre-canned routines
+
 namespace aliuly\worldprotect\common;
 use pocketmine\item\Item;
 use pocketmine\utils\TextFormat;
 use pocketmine\utils\MainLogger;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
-
 use aliuly\worldprotect\common\mc;
 
 /**
@@ -15,7 +18,7 @@ abstract class MPMU {
 	/** @var str[] $items Nice names for items */
 	static protected $items = [];
 	/** @const str VERSION plugin version string */
-	const VERSION = "1.90.0";
+	const VERSION = "1.92.0";
 
 	/**
 	 * libcommon library version.  If a version is provided it will check
@@ -134,7 +137,7 @@ abstract class MPMU {
 	 * @return str
 	 */
 	static public function iName($player) {
-		if ($player instanceof Player) {
+		if ($player instanceof CommandSender) {
 			$player = strtolower($player->getName());
 		}
 		return $player;
@@ -179,7 +182,7 @@ abstract class MPMU {
 		$v = null;
 		if (is_array($plug)) list($plug,$v) = $plug;
 		if (($plugin = $server->getPluginManager()->getPlugin($plug)) === null
-			 || $plugin->isEnabled()) return $default;
+			 || !$plugin->isEnabled()) return $default;
 
 		if ($v !== null && !self::apiCheck($plugin->getDescription()->getVersion(),$v)) return $default;
 		if (property_exists($plugin,"api")) {
@@ -209,7 +212,6 @@ abstract class MPMU {
 			$aliasList = [];
 			foreach($yaml["aliases"] as $alias) {
 				if(strpos($alias,":")!== false) {
-					$this->owner->getLogger()->info("Unable to load alias $alias");
 					continue;
 				}
 				$aliasList[] = $alias;
@@ -271,6 +273,15 @@ abstract class MPMU {
 		if (strtolower(substr($txt,0,$ln)) != $tok) return null;
 		return trim(substr($txt,$ln));
 	}
-
+	/**
+	 * Look-up player
+	 * @param CommandSender $req
+	 * @param str $n
+	 */
+	static public function getPlayer(CommandSender $c,$n) {
+		$pl = $c->getServer()->getPlayer($n);
+		if ($pl === null) $c->sendMessage(mc::_("%1% not found", $n));
+		return $pl;
+	}
 
 }

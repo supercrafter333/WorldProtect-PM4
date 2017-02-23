@@ -59,7 +59,6 @@ class MaxPlayerMgr extends BaseWp implements Listener {
 	}
 
 	public function onTeleport(EntityTeleportEvent $ev){
-		//echo __METHOD__.",".__LINE__."\n"; //##DEBUG
 		if ($ev->isCancelled()) return;
 		$et = $ev->getEntity();
 		if (!($et instanceof Player)) return;
@@ -79,7 +78,6 @@ class MaxPlayerMgr extends BaseWp implements Listener {
 		$from = $from->getName();
 		$to = $to->getName();
 
-		//echo "FROM:$from TO:$to\n";//##DEBUG
 		if ($from == $to) return;
 		$max = $this->getCfg($to,0);
 		if ($max == 0) return;

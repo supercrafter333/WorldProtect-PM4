@@ -81,7 +81,6 @@ class BanCmd extends BaseWp implements Listener {
 	 * @priority LOWEST
 	 */
 	public function onCmd(PlayerCommandPreprocessEvent $ev) {
-		echo __METHOD__.",".__LINE__."\n";//##DEBUG
 
 		if ($ev->isCancelled()) return;
 		$pl = $ev->getPlayer();
@@ -92,7 +91,6 @@ class BanCmd extends BaseWp implements Listener {
 		$cmdline = preg_split('/\s+/',$cmdline);
 		$cmd = strtolower($cmdline[0]);
 		if (!isset($this->wcfg[$world][$cmd])) return;
-		echo __METHOD__.",".__LINE__."\n";//##DEBUG
 		$pl->sendMessage(mc::_("That command is banned here!"));
 		$ev->setCancelled();
 	}

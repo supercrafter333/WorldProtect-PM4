@@ -1,5 +1,7 @@
 <?php
 namespace aliuly\worldprotect\common;
+//= api-features
+//: - Config shortcuts and multi-module|feature management
 
 use pocketmine\plugin\PluginBase;
 use pocketmine\command\CommandSender;
@@ -88,6 +90,13 @@ abstract class BasicPlugin extends PluginBase {
 	public function getModule($str) {
 		if (isset($this->modules[$str])) return $this->modules[$str];
 		return null;
+	}
+	/**
+	 * Get Modules array
+	 * @return array
+	 */
+	public function getModules() {
+		return $this->modules;
 	}
 	/**
 	 * Save a config section to the plugins' config.yml
@@ -180,10 +189,4 @@ abstract class BasicPlugin extends PluginBase {
 		fclose($fp);
 		return $contents;
 	}
-	/**
-	 * Lets you dump the messages.ini file
-	 */
-	 public function getMessagesIni(){
-		 return $this->getResourceContents("messages/messages.ini");
-	 }
 }
