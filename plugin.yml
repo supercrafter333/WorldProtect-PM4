@@ -1,10 +1,10 @@
 main: aliuly\worldprotect\Main
-api: [2.0.0, 3.0.0-ALPHA1, 3.0.0-ALPHA2, 3.0.0-ALPHA3]
+api: [2.0.0, 3.0.0-ALPHA1, 3.0.0-ALPHA2, 3.0.0-ALPHA3, 3.0.0-ALPHA4, 3.0.0-ALPHA5]
 load: STARTUP
 
 name: WorldProtect
 description: protect worlds from griefers, pvp, limits and borders
-version: 2.3.2b
+version: 2.3.3
 author: aliuly
 website: https://github.com/Muirfield/pocketmine-plugins/tree/master/WorldProtect
 
