@@ -20,6 +20,7 @@ use aliuly\worldprotect\common\PluginCallbackTask;
 
 class GmSaveInv extends BaseWp implements Listener {
     const TICKS = 10;
+    const DEBUG = false;
 
     public function __construct(Plugin $plugin) {
         parent::__construct($plugin);
@@ -29,18 +30,24 @@ class GmSaveInv extends BaseWp implements Listener {
     public function loadInv($playername, $inv = null, GmSaveInv $owner) {
         $player = $this->owner->getServer()->getPlayerExact($playername);
         if(!($player instanceof Player)) {
+            if(SELF::DEBUG) $this->owner->getServer()->getLogger()->info("[WP Inventory] Not a player!!");
+            // ScheduledTask on GMChange can't find player after quit, not a problem
             return;
         }
-        $player->getInventory()->clearAll();
         if($inv == null) {
+            if(SELF::DEBUG) $this->owner->getServer()->getLogger()->info("[WP Inventory] Null Inventory...");
             $inv = $owner->getState($player, null);
             if($inv == null) return;
             $this->unsetState($player);
+            if(SELF::DEBUG) $this->owner->getServer()->getLogger()->info("[WP Inventory] Unset state for $playername");
         }
+        if(SELF::DEBUG) $this->owner->getServer()->getLogger()->info("[WP Inventory] Clearing players inventory...");
+        $player->getInventory()->clearAll();
         foreach($inv as $slot => $t) {
             list($id, $dam, $cnt) = explode(":", $t);
             $item = Item::get($id, $dam, $cnt);
             $player->getInventory()->setItem($slot, $item);
+            if(SELF::DEBUG) $this->owner->getServer()->getLogger()->info("[WP Inventory] Filling Slot $slot with $id");
         }
         $player->getInventory()->sendContents($player);
     }
@@ -67,10 +74,11 @@ class GmSaveInv extends BaseWp implements Listener {
 
         // Switch gamemodes to survival/adventure so the inventory gets
         // saved...
+        if(SELF::DEBUG) $this->owner->getServer()->getLogger()->info("[WP Inventory] QUIT: setting to mode $sgm");
         $player->setGamemode($sgm);
         $player->getInventory()->clearAll();
         $this->loadInv($player->getName(), null, $this);
-        $player->save();
+        $player->save(); // Important!!
         $this->unsetState($player);
     }
 
@@ -78,9 +86,11 @@ class GmSaveInv extends BaseWp implements Listener {
         $player = $ev->getPlayer();
         $newgm = $ev->getNewGamemode();
         $oldgm = $player->getGamemode();
+        if(SELF::DEBUG) $this->owner->getServer()->getLogger()->info("[WP Inventory] Changing GM from $oldgm to $newgm...");
         if(($newgm == 1 || $newgm == 3) && ($oldgm == 0 || $oldgm == 2)) {
             // We need to save inventory
             $this->saveInv($player);
+            if(SELF::DEBUG) $this->owner->getServer()->getLogger()->info("[WP Inventory] Saved Inventory from GM $oldgm to $newgm");
         }
         if(($newgm == 0 || $newgm == 2) && ($oldgm == 1 || $oldgm == 3)) {
             // Need to restore inventory (but later!)
@@ -95,5 +105,6 @@ class GmSaveInv extends BaseWp implements Listener {
     public function PlayerDeath(PlayerDeathEvent $event) {
         $player = $event->getEntity();
         $this->loadInv($player->getName(), null, $this);
+        if(SELF::DEBUG) $this->owner->getServer()->getLogger()->info("[WP Inventory] Loaded inventory on death");
     }
 }
