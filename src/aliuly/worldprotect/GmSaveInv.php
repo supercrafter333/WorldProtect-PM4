@@ -4,7 +4,7 @@
 //:
 //: This is useful for when you have per world game modes so that
 //: players going from a survival world to a creative world and back
-//: do not loose their inventory.
+//: do not lose their inventory.
 
 namespace aliuly\worldprotect;
 
@@ -20,7 +20,7 @@ use aliuly\worldprotect\common\PluginCallbackTask;
 
 class GmSaveInv extends BaseWp implements Listener {
     const TICKS = 10;
-    const DEBUG = false;
+    const DEBUG = true;
 
     public function __construct(Plugin $plugin) {
         parent::__construct($plugin);
@@ -34,15 +34,12 @@ class GmSaveInv extends BaseWp implements Listener {
             // ScheduledTask on GMChange can't find player after quit, not a problem
             return;
         }
+        $inv = $owner->getState($player, null);
         if($inv == null) {
             if(SELF::DEBUG) $this->owner->getServer()->getLogger()->info("[WP Inventory] Null Inventory...");
-            $inv = $owner->getState($player, null);
-            if($inv == null) return;
-            $this->unsetState($player);
-            if(SELF::DEBUG) $this->owner->getServer()->getLogger()->info("[WP Inventory] Unset state for $playername");
+            $player->getInventory()->sendContents($player);
+            return;
         }
-        if(SELF::DEBUG) $this->owner->getServer()->getLogger()->info("[WP Inventory] Clearing players inventory...");
-        $player->getInventory()->clearAll();
         foreach($inv as $slot => $t) {
             list($id, $dam, $cnt) = explode(":", $t);
             $item = Item::get($id, $dam, $cnt);
@@ -90,21 +87,23 @@ class GmSaveInv extends BaseWp implements Listener {
         if(($newgm == 1 || $newgm == 3) && ($oldgm == 0 || $oldgm == 2)) {
             // We need to save inventory
             $this->saveInv($player);
-            if(SELF::DEBUG) $this->owner->getServer()->getLogger()->info("[WP Inventory] Saved Inventory from GM $oldgm to $newgm");
+            $player->getInventory()->clearAll();
+            if(SELF::DEBUG) $this->owner->getServer()->getLogger()->info("[WP Inventory] Saved and Cleared current Inventory from GM $oldgm to $newgm");
         }
         if(($newgm == 0 || $newgm == 2) && ($oldgm == 1 || $oldgm == 3)) {
+            if(SELF::DEBUG) $this->owner->getServer()->getLogger()->info("[WP Inventory] GM change clearing players current inventory...");
+            $player->getInventory()->clearAll();
             // Need to restore inventory (but later!)
             $this->owner->getServer()->getScheduler()->scheduleDelayedTask(new PluginCallbackTask($this->owner, [$this, "loadInv"], [$player->getName(), null, $this]), self::TICKS);
         }
     }
 
-    /**
-     * @priority LOWEST
-     */
-
-    public function PlayerDeath(PlayerDeathEvent $event) {
-        $player = $event->getEntity();
-        $this->loadInv($player->getName(), null, $this);
-        if(SELF::DEBUG) $this->owner->getServer()->getLogger()->info("[WP Inventory] Loaded inventory on death");
+    public function PlayerDeath(PlayerDeathEvent $event){
+        $player = $event->getPlayer();
+        if ($player->getGamemode() == Player::CREATIVE || $player->getGamemode() == Player::SPECTATOR) {
+            $this->unsetState($player);
+            if(GmSaveInv::DEBUG) $this->owner->getServer()->getLogger()->info("[WP Death Inventory] Clear Saved Inventory on C Mode Death...");
+        }
+        $player->teleport($player->getSpawn());
     }
 }

@@ -46,13 +46,14 @@ class Main extends BasicPlugin implements CommandExecutor,Listener {
 			"banitem" => [ "BanItem", true ],
 			"gamemode" => [ "GmMgr", false ],
 			"gm-save-inv" => [ "GmSaveInv", false ],
+            "death-save-inv" => [ "DeathSaveInv", true ],
 		], [
 			"version" => $this->getDescription()->getVersion(),
 			"motd" => WpMotdMgr::defaults(),
 		],mc::_("/%s [world] %s %s"));
 		$this->modules[] = new WpList($this);
 
-		// Make sure that loaded worlds are inded loaded...
+		// Make sure that loaded worlds are indeed loaded...
 		foreach ($this->getServer()->getLevels() as $lv) {
 			$this->loadCfg($lv);
 		}
