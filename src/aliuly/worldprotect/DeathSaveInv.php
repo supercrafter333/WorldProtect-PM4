@@ -27,10 +27,10 @@ class DeathSaveInv extends BaseWp implements Listener {
      * @priority LOWEST
      */
 
-    public function PlayerDeath(PlayerDeathEvent $event){
-        $event->setDrops(array());
+    public function PlayerDeath(PlayerDeathEvent $event) {
+        $event->setDrops([]);
         $player = $event->getPlayer();
-        if ($player->getGamemode() == Player::SURVIVAL || $player->getGamemode() == Player::ADVENTURE) {
+        if($player->getGamemode() == Player::SURVIVAL || $player->getGamemode() == Player::ADVENTURE) {
             $inv = [];
             foreach($player->getInventory()->getContents() as $slot => &$item) {
                 $inv[$slot] = implode(":", [$item->getId(),
@@ -43,12 +43,12 @@ class DeathSaveInv extends BaseWp implements Listener {
         $player->teleport($player->getSpawn());
     }
 
-    public function PlayerRespawn(PlayerRespawnEvent $event){
+    public function PlayerRespawn(PlayerRespawnEvent $event) {
         if(GmSaveInv::DEBUG) $this->owner->getServer()->getLogger()->info("[WP Death Inventory] Respawning...");
 
         $player = $event->getPlayer();
         $inv = $this->getState($player, null);
-        if ($inv != null) {
+        if($inv != null) {
             $player->getInventory()->clearAll();
             foreach($inv as $slot => $t) {
                 list($id, $dam, $cnt) = explode(":", $t);

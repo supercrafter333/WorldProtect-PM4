@@ -46,7 +46,7 @@ class Main extends BasicPlugin implements CommandExecutor,Listener {
 			"banitem" => [ "BanItem", true ],
 			"gamemode" => [ "GmMgr", false ],
 			"gm-save-inv" => [ "GmSaveInv", false ],
-            "death-save-inv" => [ "DeathSaveInv", true ],
+            "death-save-inv" => [ "DeathSaveInv", false ],
 		], [
 			"version" => $this->getDescription()->getVersion(),
 			"motd" => WpMotdMgr::defaults(),

@@ -20,7 +20,7 @@ use aliuly\worldprotect\common\PluginCallbackTask;
 
 class GmSaveInv extends BaseWp implements Listener {
     const TICKS = 10;
-    const DEBUG = true;
+    const DEBUG = false;
 
     public function __construct(Plugin $plugin) {
         parent::__construct($plugin);
@@ -98,9 +98,9 @@ class GmSaveInv extends BaseWp implements Listener {
         }
     }
 
-    public function PlayerDeath(PlayerDeathEvent $event){
+    public function PlayerDeath(PlayerDeathEvent $event) {
         $player = $event->getPlayer();
-        if ($player->getGamemode() == Player::CREATIVE || $player->getGamemode() == Player::SPECTATOR) {
+        if($player->getGamemode() == Player::CREATIVE || $player->getGamemode() == Player::SPECTATOR) {
             $this->unsetState($player);
             if(GmSaveInv::DEBUG) $this->owner->getServer()->getLogger()->info("[WP Death Inventory] Clear Saved Inventory on C Mode Death...");
         }
