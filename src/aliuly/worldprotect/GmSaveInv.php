@@ -36,8 +36,7 @@ class GmSaveInv extends BaseWp implements Listener {
         }
         $inv = $owner->getState($player, null);
         if($inv == null) {
-            if(SELF::DEBUG) $this->owner->getServer()->getLogger()->info("[WP Inventory] Null Inventory...");
-            $player->getInventory()->sendContents($player);
+            if(SELF::DEBUG) $this->owner->getServer()->getLogger()->info("[WP Inventory] Can't lLad Null Inventory");
             return;
         }
         foreach($inv as $slot => $t) {
@@ -88,10 +87,10 @@ class GmSaveInv extends BaseWp implements Listener {
             // We need to save inventory
             $this->saveInv($player);
             $player->getInventory()->clearAll();
-            if(SELF::DEBUG) $this->owner->getServer()->getLogger()->info("[WP Inventory] Saved and Cleared current Inventory from GM $oldgm to $newgm");
+            if(SELF::DEBUG) $this->owner->getServer()->getLogger()->info("[WP Inventory] Saved and Cleared Current Inventory from GM $oldgm to $newgm");
         }
         if(($newgm == 0 || $newgm == 2) && ($oldgm == 1 || $oldgm == 3)) {
-            if(SELF::DEBUG) $this->owner->getServer()->getLogger()->info("[WP Inventory] GM change clearing players current inventory...");
+            if(SELF::DEBUG) $this->owner->getServer()->getLogger()->info("[WP Inventory] GM Change - Clear and Reload Saved Inventory...");
             $player->getInventory()->clearAll();
             // Need to restore inventory (but later!)
             $this->owner->getServer()->getScheduler()->scheduleDelayedTask(new PluginCallbackTask($this->owner, [$this, "loadInv"], [$player->getName(), null, $this]), self::TICKS);
@@ -104,6 +103,5 @@ class GmSaveInv extends BaseWp implements Listener {
             $this->unsetState($player);
             if(GmSaveInv::DEBUG) $this->owner->getServer()->getLogger()->info("[WP Death Inventory] Clear Saved Inventory on C Mode Death...");
         }
-        $player->teleport($player->getSpawn());
     }
 }
