@@ -1,7 +1,6 @@
 <?php
 //= module:death-save-inv
 //: Restored saved s mode inventory contents after death.
-//: This option should really be used with gm-save-inv activated :
 //: Survival mode players will keep inventory when they die ((if gm-save-inv is activated or not)
 //: Creative mode players will have saved smode inventory on death (if gm-save-inv is activated)
 //: otherwise they will have an empty inventory
