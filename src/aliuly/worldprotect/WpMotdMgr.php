@@ -72,7 +72,7 @@ class WpMotdMgr extends BaseWp implements Listener, CommandExecutor {
 	}
 
 
-	public function onCommand(CommandSender $sender, Command $cmd, $label, array $args) {
+	public function onCommand(CommandSender $sender, Command $cmd, string $label, array $args) : bool{
 		if ($cmd->getName() != "motd") return false;
 		if ($sender instanceof Player) {
 			$world = $sender->getLevel()->getName();
