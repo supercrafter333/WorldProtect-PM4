@@ -159,7 +159,7 @@ class WpList extends BaseWp {
 			$txt[] = $ln;
 			++$cnt;
 		}
-		if (!count($ln)) {
+		if (!strlen($ln) > 0) {
 			$c->sendMessage(mc::_("Nothing to report"));
 			return true;
 		}
