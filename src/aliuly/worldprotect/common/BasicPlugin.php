@@ -19,8 +19,8 @@ use aliuly\worldprotect\common\SubCommandMap;
  * Simple extension to the PocketMine PluginBase class
  */
 abstract class BasicPlugin extends PluginBase {
-	protected $modules = [];
-	protected $scmdMap = null;
+	protected $modules;
+	protected $scmdMap;
 	protected $session;
 
 	/**
@@ -32,7 +32,7 @@ abstract class BasicPlugin extends PluginBase {
 	 * @param str $xhlp - optional help format.
 	 * @return array
 	 */
-	protected function modConfig($ns,$mods,$defaults,$xhlp="") {
+	protected function modConfig($ns,$mods,$defaults,$xhlp="") : array{
 		if (!isset($defaults["features"])) $defaults["features"] = [];
 		foreach ($mods as $i => $j) {
 			$defaults["features"][$i] = $j[1];
@@ -71,7 +71,7 @@ abstract class BasicPlugin extends PluginBase {
 		$c = count($this->modules);
 		if ($c == 0) {
 			$this->getLogger()->info(mc::_("NO features enabled"));
-			return;
+			return [];
 		}
 		$this->session = null;
 		$this->getLogger()->info(mc::n(mc::_("Enabled one feature"),

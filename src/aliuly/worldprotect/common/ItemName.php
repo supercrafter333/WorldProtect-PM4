@@ -97,7 +97,7 @@ abstract class ItemName {
 	 * @param Item item
 	 * @return str
 	 */
-	static public function str(Item $item) {
+	static public function str(Item $item) : string{
 		$id = $item->getId();
 		$meta = $item->getDamage();
 		if (isset(self::$usrnames[$id.":".$meta])) return self::$usrnames[$id.":".$meta];
