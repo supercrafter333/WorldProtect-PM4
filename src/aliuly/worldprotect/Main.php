@@ -45,8 +45,7 @@ class Main extends BasicPlugin implements CommandExecutor,Listener {
 			"bancmds" => [ "BanCmd" , false ],
 			"banitem" => [ "BanItem", true ],
 			"gamemode" => [ "GmMgr", false ],
-			"gm-save-inv" => [ "GmSaveInv", false ],
-            "death-save-inv" => [ "DeathSaveInv", false ],
+			"gm-save-inv" => [ "SaveInventory", false ]
 		], [
 			"version" => $this->getDescription()->getVersion(),
 			"motd" => WpMotdMgr::defaults(),
@@ -60,6 +59,12 @@ class Main extends BasicPlugin implements CommandExecutor,Listener {
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
 
 	}
+
+    public function onDisable(){
+            foreach($this->getServer()->getLoggedInPlayers() as $player){
+                $this->getModule("SaveInventory")->saveSurvivalInventory($player);
+            }
+    }
 
 	//////////////////////////////////////////////////////////////////////
 	//

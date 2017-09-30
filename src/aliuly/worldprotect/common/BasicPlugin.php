@@ -167,7 +167,7 @@ abstract class BasicPlugin extends PluginBase {
 	 * Clears a player related state
 	 *
 	 * @param str $label - state variable to clear
-	 * @param Player|str $player - intance of Player or their name
+	 * @param Player|str $player - instance of Player or their name
 	 */
 	public function unsetState($label,$player) {
 		if ($this->session === null) return;
