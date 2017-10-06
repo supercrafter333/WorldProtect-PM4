@@ -60,10 +60,14 @@ class Main extends BasicPlugin implements CommandExecutor,Listener {
 
 	}
 
+	/**
+	 * @priority LOWEST
+	 */
+
     public function onDisable(){
-            foreach($this->getServer()->getLoggedInPlayers() as $player){
-                $this->getModule("SaveInventory")->saveSurvivalInventory($player);
-            }
+/*            foreach($this->getServer()->getOnlinePlayers() as $player){
+                $this->getModule("SaveInventory")->saveInventory($player);
+            }*/
     }
 
 	//////////////////////////////////////////////////////////////////////
