@@ -22,12 +22,12 @@ use aliuly\worldprotect\common\PluginCallbackTask;
 class SaveInventory extends BaseWp implements Listener{
 	const TICKS = 10;
 	const DEBUG = true;
-	private $saveOnDeath = false;
+	private $saveOnDeath;
 
 	public function __construct(Plugin $plugin){
 		parent::__construct($plugin);
 		$this->owner->getServer()->getPluginManager()->registerEvents($this, $this->owner);
-		$this->saveOnDeath = $plugin->getConfig()->getNested("features")["death-save-inv"];
+		$this->saveOnDeath = $plugin->getConfig()->getNested("features")["death-save-inv"] ?? false;
 	}
 
 	public function loadInv(Player $player, $inv = null, SaveInventory $owner){
@@ -62,10 +62,6 @@ class SaveInventory extends BaseWp implements Listener{
 
 	public function onQuit(PlayerQuitEvent $ev){
 		$player = $ev->getPlayer();
-		$this->loadSavedInventory($player);
-	}
-
-	public function loadSavedInventory(Player $player){
 		$pgm = $player->getGamemode();
 		if($pgm == 0 || $pgm == 2) return; // No need to do anything...
 		// Switch gamemodes to survival/adventure so the survival inventory gets

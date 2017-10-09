@@ -65,6 +65,7 @@ class Main extends BasicPlugin implements CommandExecutor,Listener {
 	 */
 
     public function onDisable(){
+    	// Creative players lose survival inventory when the server is disabled. WIP
 /*            foreach($this->getServer()->getOnlinePlayers() as $player){
                 $this->getModule("SaveInventory")->saveInventory($player);
             }*/
