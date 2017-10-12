@@ -21,7 +21,7 @@ use aliuly\worldprotect\common\PluginCallbackTask;
 
 class SaveInventory extends BaseWp implements Listener{
 	const TICKS = 10;
-	const DEBUG = true;
+	const DEBUG = false;
 	private $saveOnDeath;
 
 	public function __construct(Plugin $plugin){
