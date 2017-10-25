@@ -13,9 +13,10 @@ use pocketmine\event\Listener;
 use pocketmine\item\Item;
 use pocketmine\event\player\PlayerDeathEvent;
 use pocketmine\event\player\PlayerGameModeChangeEvent;
-use pocketmine\event\player\PlayerQuitEvent;
-use pocketmine\event\player\PlayerRespawnEvent;
 use pocketmine\Player;
+use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\nbt\tag\IntTag;
+use pocketmine\nbt\tag\ListTag;
 
 use aliuly\worldprotect\common\PluginCallbackTask;
 
@@ -30,48 +31,55 @@ class SaveInventory extends BaseWp implements Listener{
 		$this->saveOnDeath = $plugin->getConfig()->getNested("features")["death-save-inv"] ?? false;
 	}
 
-	public function loadInv(Player $player, $inv = null, SaveInventory $owner){
-		$inv = $owner->getState($player, null);
-		if($inv == null){
-			// ScheduledTask on GMChange can't get players saved inventory after quit, not a problem
-			if(self::DEBUG) $this->owner->getServer()->getLogger()->info("[WP Inventory] Can't load Null Inventory. Player Quit?");
-			return;
-		}
-		foreach($inv as $slot => $t){
-			list($id, $dam, $cnt) = explode(":", $t);
-			$item = Item::get($id, $dam, $cnt);
-			$player->getInventory()->setItem($slot, $item);
-			if(self::DEBUG) $this->owner->getServer()->getLogger()->info("[WP Inventory] Filling Slot $slot with $id");
-		}
-		$player->getInventory()->sendContents($player);
-	}
+    public function loadInv(Player $player, $inv = null, SaveInventory $owner){
+
+        $nbt = $player->namedtag ?? new CompoundTag("", []);
+        if(isset($nbt->SurvivalInventory)){
+            $inv = $nbt->SurvivalInventory->getValue();
+        }else{
+            if(self::DEBUG) $this->owner->getServer()->geLogger()->info("[WP Inventory] SurvivalInventory Not Found");
+            return;
+        }
+
+        if($inv == null){
+            // ScheduledTask on GMChange can't get players saved inventory after quit, not a problem
+            if(self::DEBUG) $this->owner->getServer()->getLogger()->info("[WP Inventory] Can't load Null Inventory. Player Quit?");
+            return;
+        }
+        foreach($inv as $slot){
+            $item = Item::get($slot["id"], $slot["Damage"], $slot["Count"]);
+            $player->getInventory()->setItem($slot["Slot"], $item);
+            if(self::DEBUG) $this->owner->getServer()->getLogger()->info("[WP Inventory] Filling Slot " . $slot["Slot"] . " with " . $slot["id"]);
+        }
+        $player->getInventory()->sendContents($player);
+    }
 
 	public function saveInv(Player $player){
 		$inv = [];
 		foreach($player->getInventory()->getContents() as $slot => &$item){
-			$inv[$slot] = implode(":", [$item->getId(),
-				$item->getDamage(),
-				$item->getCount()]);
+			$inv[$slot] = [
+				$item->getCount(),
+                $slot,
+                $item->getDamage(),
+                $item->getId()
+            ];
 		}
-		$this->setState($player, $inv);
-	}
 
-	/**
-	 * @priority LOWEST
-	 */
-
-	public function onQuit(PlayerQuitEvent $ev){
-		$player = $ev->getPlayer();
-		$pgm = $player->getGamemode();
-		if($pgm == 0 || $pgm == 2) return; // No need to do anything...
-		// Switch gamemodes to survival/adventure so the survival inventory gets
-		// saved to player.dat
-		if(self::DEBUG) $this->owner->getServer()->getLogger()->info("[WP Inventory] Loading Survival Inventory");
-		$player->setGamemode(0);
-		$player->getInventory()->clearAll();
-		$this->loadInv($player, null, $this);
-		$player->save(); // Important!!
-		$this->unsetState($player);
+        $nbt = $player->namedtag ?? new CompoundTag("", []);
+        $slots = [];
+        foreach($inv as $slot) {
+            $survivalSlot = new CompoundTag("", [
+                new IntTag("Count", $slot[0]),
+                new IntTag("Slot", $slot[1]),
+                new IntTag("Damage", $slot[2]),
+                new IntTag("id", $slot[3])
+            ]);
+            $slots[] = $survivalSlot;
+        }
+        $survivalInventory = new ListTag("SurvivalInventory", $slots);
+        $nbt->SurvivalInventory = $survivalInventory;
+        $player->namedtag = $nbt;
+        $player->save();
 	}
 
 	public function onGmChange(PlayerGameModeChangeEvent $ev){
@@ -83,15 +91,19 @@ class SaveInventory extends BaseWp implements Listener{
 			$this->saveInv($player);
 			if(self::DEBUG) $this->owner->getServer()->getLogger()->info("[WP Inventory] Saved Inventory from GM $oldgm to $newgm");
 		}elseif(($newgm == 0 || $newgm == 2) && ($oldgm == 1 || $oldgm == 3)){
-			if(self::DEBUG) $this->owner->getServer()->getLogger()->info("[WP Inventory] GM Change - Clear Player Inventory and Reload Saved Inventory...");
+			if(self::DEBUG) $this->owner->getServer()->getLogger()->info("[WP Inventory] GM Change - Clear Player Inventory and load SurvivalInventory...");
 			$player->getInventory()->clearAll();
 			// Need to restore inventory (but later!)
 			$this->owner->getServer()->getScheduler()->scheduleDelayedTask(new PluginCallbackTask($this->owner, [$this, "loadInv"], [$player, null, $this]), self::TICKS);
 		}
 	}
 
-	public function onPlayerDeath(PlayerDeathEvent $event){
-		if(!$this->saveOnDeath) return;
-		$event->setKeepInventory(true);
-	}
+    public function PlayerDeath(PlayerDeathEvent $event) {
+        if(!$this->saveOnDeath) return;
+        $player = $event->getPlayer();
+        // $event->setKeepInventory(true); // NOT WORKING
+        // Need to restore inventory (but later!).
+        $this->owner->getServer()->getScheduler()->scheduleDelayedTask(new PluginCallbackTask($this->owner, [$this, "loadInv"], [$player, null, $this]), self::TICKS);
+        if(self::DEBUG) $this->owner->getServer()->getLogger()->info("[WP Inventory] Reloaded SurvivalInventory on death");
+    }
 }
