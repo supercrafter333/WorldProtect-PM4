@@ -23,12 +23,10 @@ use aliuly\worldprotect\common\PluginCallbackTask;
 class SaveInventory extends BaseWp implements Listener{
 	const TICKS = 10;
 	const DEBUG = false;
-	private $saveOnDeath;
 
 	public function __construct(Plugin $plugin){
 		parent::__construct($plugin);
 		$this->owner->getServer()->getPluginManager()->registerEvents($this, $this->owner);
-		$this->saveOnDeath = $plugin->getConfig()->getNested("features")["death-save-inv"] ?? false;
 	}
 
     public function loadInv(Player $player, $inv = null, SaveInventory $owner){
@@ -99,9 +97,7 @@ class SaveInventory extends BaseWp implements Listener{
 	}
 
     public function PlayerDeath(PlayerDeathEvent $event) {
-        if(!$this->saveOnDeath) return;
         $player = $event->getPlayer();
-        // $event->setKeepInventory(true); // NOT WORKING
         // Need to restore inventory (but later!).
         $this->owner->getServer()->getScheduler()->scheduleDelayedTask(new PluginCallbackTask($this->owner, [$this, "loadInv"], [$player, null, $this]), self::TICKS);
         if(self::DEBUG) $this->owner->getServer()->getLogger()->info("[WP Inventory] Reloaded SurvivalInventory on death");

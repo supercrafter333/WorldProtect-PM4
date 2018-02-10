@@ -42,7 +42,7 @@ abstract class BasicPlugin extends PluginBase {
 		$this->modules = [];
 		foreach ($cfg["features"] as $i=>$j) {
 			if (!isset($mods[$i])) {
-				$this->getLogger()->info(mc::_("Unknown feature \"%1%\" ignored.",$i));
+				$this->getLogger()->debug(mc::_("Unknown feature \"%1%\" ignored.",$i));
 				continue;
 			}
 			if (!$j) continue;
