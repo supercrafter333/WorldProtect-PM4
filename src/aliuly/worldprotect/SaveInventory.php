@@ -29,11 +29,12 @@ class SaveInventory extends BaseWp implements Listener{
 		$this->owner->getServer()->getPluginManager()->registerEvents($this, $this->owner);
 	}
 
-    public function loadInv(Player $player, $inv = null, SaveInventory $owner){
+    public function loadInv(Player $player){
 
         $nbt = $player->namedtag ?? new CompoundTag("", []);
-        if(isset($nbt->SurvivalInventory)){
-            $inv = $nbt->SurvivalInventory->getValue();
+        $inv = $nbt->getListTag("SurvivalInventory");
+        if(isset($inv)){
+            $inv = $nbt->getListTag("SurvivalInventory")->getValue();
         }else{
             if(self::DEBUG) $this->owner->getServer()->geLogger()->info("[WP Inventory] SurvivalInventory Not Found");
             return;
@@ -44,10 +45,10 @@ class SaveInventory extends BaseWp implements Listener{
             if(self::DEBUG) $this->owner->getServer()->getLogger()->info("[WP Inventory] Can't load Null Inventory. Player Quit?");
             return;
         }
-        foreach($inv as $slot){
-            $item = Item::get($slot["id"], $slot["Damage"], $slot["Count"]);
-            $player->getInventory()->setItem($slot["Slot"], $item);
-            if(self::DEBUG) $this->owner->getServer()->getLogger()->info("[WP Inventory] Filling Slot " . $slot["Slot"] . " with " . $slot["id"]);
+        foreach($inv as $field){
+            $item = Item::get($field["id"], $field["Damage"], $field["Count"]);
+            $player->getInventory()->setItem($field["Slot"], $item);
+            if(self::DEBUG) $this->owner->getServer()->getLogger()->info("[WP Inventory] Filling Slot " . $field["Slot"] . " with " . $field["id"]);
         }
         $player->getInventory()->sendContents($player);
     }
@@ -74,8 +75,7 @@ class SaveInventory extends BaseWp implements Listener{
             ]);
             $slots[] = $survivalSlot;
         }
-        $survivalInventory = new ListTag("SurvivalInventory", $slots);
-        $nbt->SurvivalInventory = $survivalInventory;
+        $nbt->setTagValue("SurvivalInventory", ListTag::class, $slots, true);
         $player->namedtag = $nbt;
         $player->save();
 	}
@@ -92,14 +92,14 @@ class SaveInventory extends BaseWp implements Listener{
 			if(self::DEBUG) $this->owner->getServer()->getLogger()->info("[WP Inventory] GM Change - Clear Player Inventory and load SurvivalInventory...");
 			$player->getInventory()->clearAll();
 			// Need to restore inventory (but later!)
-			$this->owner->getServer()->getScheduler()->scheduleDelayedTask(new PluginCallbackTask($this->owner, [$this, "loadInv"], [$player, null, $this]), self::TICKS);
+			$this->owner->getServer()->getScheduler()->scheduleDelayedTask(new PluginCallbackTask($this->owner, [$this, "loadInv"], [$player]), self::TICKS);
 		}
 	}
 
     public function PlayerDeath(PlayerDeathEvent $event) {
         $player = $event->getPlayer();
         // Need to restore inventory (but later!).
-        $this->owner->getServer()->getScheduler()->scheduleDelayedTask(new PluginCallbackTask($this->owner, [$this, "loadInv"], [$player, null, $this]), self::TICKS);
+        $this->owner->getServer()->getScheduler()->scheduleDelayedTask(new PluginCallbackTask($this->owner, [$this, "loadInv"], [$player]), self::TICKS);
         if(self::DEBUG) $this->owner->getServer()->getLogger()->info("[WP Inventory] Reloaded SurvivalInventory on death");
     }
 }
