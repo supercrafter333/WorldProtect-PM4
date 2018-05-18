@@ -75,7 +75,7 @@ class SaveInventory extends BaseWp implements Listener {
 			]);
 			$slots[] = $survivalSlot;
 		}
-		$nbt->setTagValue("SurvivalInventory", ListTag::class, $slots, true);
+		$nbt->setTag(new ListTag("SurvivalInventory", $slots), true);
 		$player->namedtag = $nbt;
 		$player->save();
 	}
