@@ -36,7 +36,7 @@ class SaveInventory extends BaseWp implements Listener {
 		if(isset($inv)) {
 			$inv = $nbt->getListTag("SurvivalInventory")->getValue();
 		} else {
-			if(self::DEBUG) $this->owner->getServer()->geLogger()->info("[WP Inventory] SurvivalInventory Not Found");
+			if(self::DEBUG) $this->owner->getServer()->getLogger()->info("[WP Inventory] SurvivalInventory Not Found");
 			return;
 		}
 
@@ -92,14 +92,14 @@ class SaveInventory extends BaseWp implements Listener {
 			if(self::DEBUG) $this->owner->getServer()->getLogger()->info("[WP Inventory] GM Change - Clear Player Inventory and load SurvivalInventory...");
 			$player->getInventory()->clearAll();
 			// Need to restore inventory (but later!)
-			$this->owner->getServer()->getScheduler()->scheduleDelayedTask(new PluginCallbackTask($this->owner, [$this, "loadInv"], [$player]), self::TICKS);
+			$this->owner->getScheduler()->scheduleDelayedTask(new PluginCallbackTask($this->owner, [$this, "loadInv"], [$player]), self::TICKS);
 		}
 	}
 
 	public function PlayerDeath(PlayerDeathEvent $event) {
 		$player = $event->getPlayer();
 		// Need to restore inventory (but later!).
-		$this->owner->getServer()->getScheduler()->scheduleDelayedTask(new PluginCallbackTask($this->owner, [$this, "loadInv"], [$player]), self::TICKS);
+		$this->owner->getScheduler()->scheduleDelayedTask(new PluginCallbackTask($this->owner, [$this, "loadInv"], [$player]), self::TICKS);
 		if(self::DEBUG) $this->owner->getServer()->getLogger()->info("[WP Inventory] Reloaded SurvivalInventory on death");
 	}
 }
