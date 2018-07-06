@@ -98,8 +98,8 @@ abstract class mc {
 			if ($c) {
 				for ($i=0;$i<$c;++$i) {
 					if ($mm[2][$i] == "") continue;
-					eval(stripcslashes('$a = "'.$mm[1][$i].'";'));
-					eval(stripcslashes('$b = "'.$mm[2][$i].'";'));
+					$a = stripcslashes($mm[1][$i]);
+					$b = stripcslashes($mm[2][$i]);
 					self::$txt[$a] = $b;
 				}
 				return $c;
