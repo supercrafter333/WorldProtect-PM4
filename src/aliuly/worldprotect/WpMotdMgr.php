@@ -58,7 +58,7 @@ class WpMotdMgr extends BaseWp implements Listener, CommandExecutor {
 	}
 	public function __construct(Plugin $plugin,$cfg) {
 		parent::__construct($plugin);
-		$this->owner->getServer()->getPluginManager()->registerEvents($this, $this->owner);
+		Server::getInstance()->getPluginManager()->registerEvents($this, $this->owner);
 		$this->ticks = $cfg["ticks"];
 		$this->auto  = $cfg["auto-motd"];
 		$this->enableSCmd("motd",["usage" => mc::_("[text]"),
@@ -117,7 +117,7 @@ class WpMotdMgr extends BaseWp implements Listener, CommandExecutor {
 			if ($c instanceof Player) {
 				$ticks = $this->ticks;
 				foreach ($motd as $ln) {
-					$this->owner->getServer()->getScheduler()->scheduleDelayedTask(new PluginCallbackTask($this->owner,[$c,"sendMessage"],[$ln]),$ticks);
+					$this->owner->getScheduler()->scheduleDelayedTask(new PluginCallbackTask($this->owner,[$c,"sendMessage"],[$ln]),$ticks);
 					$ticks += $this->ticks;
 				}
 			} else {
