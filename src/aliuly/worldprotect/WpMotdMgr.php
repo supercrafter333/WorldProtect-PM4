@@ -42,6 +42,7 @@ use pocketmine\event\entity\EntityLevelChangeEvent;
 use pocketmine\Player;
 use aliuly\worldprotect\common\PluginCallbackTask;
 use aliuly\worldprotect\common\mc;
+use pocketmine\Server;
 
 class WpMotdMgr extends BaseWp implements Listener, CommandExecutor {
 	protected $ticks;
