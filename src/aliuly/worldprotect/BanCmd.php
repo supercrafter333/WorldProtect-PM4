@@ -47,7 +47,7 @@ class BanCmd extends BaseWp implements Listener {
 		$cmds = $this->owner->getCfg($world, "bancmds", []);
 		if ($scmd == "unbancmd") {
 			foreach ($args as $i) {
-				if ($i{0} !== "/") $i = "/".$i;
+				if ($i[0] !== "/") $i = "/".$i;
 				$i = strtolower($i);
 				if (isset($cmds[$i])) {
 					unset($cmds[$i]);
@@ -56,7 +56,7 @@ class BanCmd extends BaseWp implements Listener {
 			}
 		} elseif ($scmd == "bancmd") {
 			foreach ($args as $i) {
-				if ($i{0} !== "/") $i = "/".$i;
+				if ($i[0] !== "/") $i = "/".$i;
 				$i = strtolower($i);
 				if (isset($cmds[$i])) continue;
 				$cmds[$i] = $i;
