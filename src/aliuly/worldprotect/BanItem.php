@@ -20,6 +20,10 @@
 
 namespace aliuly\worldprotect;
 
+use pocketmine\data\bedrock\LegacyItemIdToStringIdMap;
+use pocketmine\item\ItemFactory;
+use pocketmine\item\ItemIds;
+use pocketmine\item\StringToItemParser;
 use pocketmine\plugin\PluginBase as Plugin;
 use pocketmine\event\Listener;
 use pocketmine\command\CommandSender;
@@ -29,7 +33,7 @@ use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerItemConsumeEvent;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\item\Item;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use aliuly\worldprotect\common\mc;
 use aliuly\worldprotect\common\ItemName;
 
@@ -67,7 +71,7 @@ class BanItem extends BaseWp implements Listener {
 		$ids = $this->owner->getCfg($world, "banitem", []);
 		if ($scmd == "unbanitem") {
 			foreach ($args as $i) {
-				$item = Item::fromString($i);
+				$item = StringToItemParser::getInstance()->parse($i);
 				if (isset($ids[$item->getId()])) {
 					unset($ids[$item->getId()]);
 					++$cc;
@@ -75,7 +79,7 @@ class BanItem extends BaseWp implements Listener {
 			}
 		} elseif ($scmd == "banitem") {
 			foreach ($args as $i) {
-				$item = Item::fromString($i);
+				$item = StringToItemParser::getInstance()->parse($i);
 				if (isset($ids[$item->getId()])) continue;
 				$ids[$item->getId()] = ItemName::str($item);
 				++$cc;
@@ -99,33 +103,33 @@ class BanItem extends BaseWp implements Listener {
 		if ($ev->isCancelled()) return;
 		$pl = $ev->getPlayer();
                 if ($pl->hasPermission("wp.banitem.exempt")) return;
-		$world = $pl->getLevel()->getName();
+		$world = $pl->getWorld()->getFolderName();
 		if (!isset($this->wcfg[$world])) return;
 		$item = $ev->getItem();
 		if (!isset($this->wcfg[$world][$item->getId()])) return;
 		$pl->sendMessage(mc::_("You can not use that item here!"));
-		$ev->setCancelled();
+		$ev->cancel();
 	}
 	public function onConsume(PlayerItemConsumeEvent $ev) {
 		if ($ev->isCancelled()) return;
 		$pl = $ev->getPlayer();
 		if ($pl->hasPermission("wp.banitem.exempt")) return;
-		$world = $pl->getLevel()->getName();
+		$world = $pl->getWorld()->getFolderName();
 		if (!isset($this->wcfg[$world])) return;
 		$item = $ev->getItem();
 		if (!isset($this->wcfg[$world][$item->getId()])) return;
 		$pl->sendMessage(mc::_("You can not use that item here!"));
-		$ev->setCancelled();
+		$ev->cancel();
 	}
 	public function onBlockPlace(BlockPlaceEvent $ev) {
 		if ($ev->isCancelled()) return;
 		$pl = $ev->getPlayer();
 		if ($pl->hasPermission("wp.banitem.exempt")) return;
-		$world = $pl->getLevel()->getName();
+		$world = $pl->getWorld()->getFolderName();
 		if (!isset($this->wcfg[$world])) return;
 		$item = $ev->getItem();
 		if (!isset($this->wcfg[$world][$item->getId()])) return;
 		$pl->sendMessage(mc::_("You can not use that item here!"));
-		$ev->setCancelled();
+		$ev->cancel();
 	}
 }

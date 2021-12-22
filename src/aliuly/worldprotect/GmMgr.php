@@ -20,7 +20,7 @@ use pocketmine\event\Listener;
 use pocketmine\command\CommandSender;
 use pocketmine\command\Command;
 use pocketmine\event\entity\EntityTeleportEvent;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use aliuly\worldprotect\common\MPMU;
 use aliuly\worldprotect\common\mc;
 
@@ -67,11 +67,11 @@ class GmMgr extends BaseWp implements Listener {
 		if (!($pl instanceof Player)) return;
 		if ($pl->hasPermission("wp.cmd.gm.exempt")) return;
 
-		$world = $ev->getTo()->getLevel();
+		$world = $ev->getTo()->getWorld();
 		if (!$world) {
-			$world = $pl->getLevel();
+			$world = $pl->getWorld();
 		}
-		$world = $world->getName();
+		$world = $world->getFolderName();
 		$gm = $this->owner->getCfg($world,"gamemode",null);
 		if ($gm === null) {
 			$gm = $this->owner->getServer()->getGamemode();

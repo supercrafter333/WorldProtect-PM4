@@ -18,9 +18,9 @@ use pocketmine\event\Listener;
 use pocketmine\command\CommandSender;
 use pocketmine\command\Command;
 use pocketmine\event\entity\EntityTeleportEvent;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use aliuly\worldprotect\common\mc;
-use pocketmine\level\Level;
+use pocketmine\world\World as Level;
 
 class MaxPlayerMgr extends BaseWp implements Listener {
 	public function __construct(Plugin $plugin) {
@@ -32,7 +32,7 @@ class MaxPlayerMgr extends BaseWp implements Listener {
 										 "aliases" => ["limit"]]);
 	}
   public function getMaxPlayers($world) {
-		if ($world instanceof Level) $world = $world->getName();
+		if ($world instanceof Level) $world = $world->getFolderName();
 	  return $this->getCfg($world,null);
 	}
 	public function onSCommand(CommandSender $c,Command $cc,$scmd,$world,array $args) {
@@ -63,8 +63,8 @@ class MaxPlayerMgr extends BaseWp implements Listener {
 		$et = $ev->getEntity();
 		if (!($et instanceof Player)) return;
 
-		$from = $ev->getFrom()->getLevel();
-		$to = $ev->getTo()->getLevel();
+		$from = $ev->getFrom()->getWorld();
+		$to = $ev->getTo()->getWorld();
 		if (!$from) {
 			// THIS SHOULDN'T HAPPEN!
 			return;
@@ -75,15 +75,15 @@ class MaxPlayerMgr extends BaseWp implements Listener {
 			return;
 		}
 
-		$from = $from->getName();
-		$to = $to->getName();
+		$from = $from->getFolderName();
+		$to = $to->getFolderName();
 
 		if ($from == $to) return;
 		$max = $this->getCfg($to,0);
 		if ($max == 0) return;
-		$np = count($this->owner->getServer()->getLevelByName($to)->getPlayers());
+		$np = count($this->owner->getServer()->getWorldManager()->getWorldByName($to)->getPlayers());
 		if($np >= $max) {
-			$ev->setCancelled();
+			$ev->cancel();
 			$et->sendMessage(mc::_("Unable to teleport to %1%\nWorld is full",$to));
 			$this->owner->getLogger()->notice(mc::_("%1% is FULL",$to));
 		}

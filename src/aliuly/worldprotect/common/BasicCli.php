@@ -5,11 +5,9 @@
 
 namespace aliuly\worldprotect\common;
 
-use pocketmine\command\ConsoleCommandSender;
 use pocketmine\command\CommandSender;
-use pocketmine\command\Command;
 use pocketmine\command\PluginCommand;
-use pocketmine\Player;
+use pocketmine\console\ConsoleCommandSender;
 
 use pocketmine\utils\TextFormat;
 
@@ -28,7 +26,7 @@ abstract class BasicCli {
   /**
 	 * Register this class as a sub-command.  See BasicPlugin for details.
 	 *
-	 * @param str $cmd - sub-command to register
+	 * @param string $cmd - sub-command to register
 	 * @param mixed[] $opts - additional options for registering sub-command
 	 */
 	public function enableSCmd($cmd,$opts) {
@@ -37,11 +35,11 @@ abstract class BasicCli {
 	/**
 	 * Register this class as a command.
 	 *
-	 * @param str $cmd - command to register
+	 * @param string $cmd - command to register
 	 * @param mixed[] $yaml - options for command
 	 */
 	public function enableCmd($cmd,$yaml) {
-		$newCmd = new PluginCommand($cmd,$this->owner);
+		$newCmd = new PluginCommand($cmd,$this->owner, $this);
 		if (isset($yaml["description"]))
 			$newCmd->setDescription($yaml["description"]);
 		if (isset($yaml["usage"]))
@@ -69,7 +67,7 @@ abstract class BasicCli {
 	 * Use for paginaged output implementation.
 	 * This gets the player specified page number that we want to Display
 	 *
-	 * @param str[] $args - Passed arguments
+	 * @param string[] $args - Passed arguments
 	 * @return int page number
 	 */
 	protected function getPageNumber(array &$args) {
@@ -86,7 +84,7 @@ abstract class BasicCli {
 	 *
 	 * @param CommandSender $sender - entity that we need to display text to
 	 * @param int $pageNumber - page that we need to display
-	 * @param str[] $txt - Array containing one element per output line
+	 * @param string[] $txt - Array containing one element per output line
 	 * @return bool true
 	 */
 	protected function paginateText(CommandSender $sender,$pageNumber,array $txt) {
@@ -118,7 +116,7 @@ abstract class BasicCli {
 	 *
 	 * @param CommandSender $sender - entity that we need to display text to
 	 * @param int $pageNumber - page that we need to display
-	 * @param str[][] $txt - Array containing one element per cell
+	 * @param string[][] $txt - Array containing one element per cell
 	 * @return bool true
 	 */
 	protected function paginateTable(CommandSender $sender,$pageNumber,array $tab) {

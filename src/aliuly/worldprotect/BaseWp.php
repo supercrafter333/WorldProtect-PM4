@@ -1,12 +1,6 @@
 <?php
 namespace aliuly\worldprotect;
 
-use pocketmine\command\ConsoleCommandSender;
-use pocketmine\command\CommandSender;
-use pocketmine\command\Command;
-use pocketmine\command\PluginCommand;
-
-use pocketmine\utils\TextFormat;
 use aliuly\worldprotect\common\BasicCli;
 
 abstract class BaseWp extends BasicCli {

@@ -16,13 +16,13 @@ namespace aliuly\worldprotect;
 use pocketmine\command\CommandSender;
 use pocketmine\command\Command;
 use pocketmine\command\CommandExecutor;
+use pocketmine\event\world\WorldLoadEvent;
+use pocketmine\event\world\WorldUnloadEvent;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat;
-use pocketmine\level\Level;
-use pocketmine\event\level\LevelLoadEvent;
-use pocketmine\event\level\LevelUnloadEvent;
+use pocketmine\world\World as Level;
 use pocketmine\event\Listener;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use aliuly\worldprotect\common\mc;
 use aliuly\worldprotect\common\MPMU;
 use aliuly\worldprotect\common\BasicPlugin;
@@ -31,7 +31,8 @@ class Main extends BasicPlugin implements CommandExecutor,Listener {
 	protected $wcfg;
 	const SPAM_DELAY = 5;
 
-	public function onEnable() {
+	public function onEnable(): void
+    {
 		if (!is_dir($this->getDataFolder())) mkdir($this->getDataFolder());
 		mc::plugin_init($this,$this->getFile());
 		$cfg = $this->modConfig(__NAMESPACE__, [
@@ -53,23 +54,12 @@ class Main extends BasicPlugin implements CommandExecutor,Listener {
 		$this->modules[] = new WpList($this);
 
 		// Make sure that loaded worlds are indeed loaded...
-		foreach ($this->getServer()->getLevels() as $lv) {
+		foreach ($this->getServer()->getWorldManager()->getWorlds() as $lv) {
 			$this->loadCfg($lv);
 		}
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
 
 	}
-
-	/**
-	 * @priority LOWEST
-	 */
-
-    public function onDisable(){
-    	// Creative players lose survival inventory when the server is disabled. WIP
-/*            foreach($this->getServer()->getOnlinePlayers() as $player){
-                $this->getModule("SaveInventory")->saveInventory($player);
-            }*/
-    }
 
 	//////////////////////////////////////////////////////////////////////
 	//
@@ -78,13 +68,13 @@ class Main extends BasicPlugin implements CommandExecutor,Listener {
 	//////////////////////////////////////////////////////////////////////
 	public function loadCfg($world) {
 
-		if ($world instanceof Level) $world = $world->getName();
+		if ($world instanceof Level) $world = $world->getFolderName();
 		if (isset($this->wcfg[$world])) return true; // world is already loaded!
-		if (!$this->getServer()->isLevelGenerated($world)) return false;
-		if (!$this->getServer()->isLevelLoaded($world)) {
+		if (!$this->getServer()->getWorldManager()->isWorldGenerated($world)) return false;
+		if (!$this->getServer()->getWorldManager()->isWorldLoaded($world)) {
 			$path = $this->getServer()->getDataPath()."worlds/".$world."/";
 		} else {
-			$level = $this->getServer()->getLevelByName($world);
+			$level = $this->getServer()->getWorldManager()->getWorldByName($world);
 			if (!$level) return false;
 			$path = $level->getProvider()->getPath();
 		}
@@ -110,13 +100,13 @@ class Main extends BasicPlugin implements CommandExecutor,Listener {
 	}
 	public function saveCfg($world) {
 
-		if ($world instanceof Level) $world = $world->getName();
+		if ($world instanceof Level) $world = $world->getFolderName();
 		if (!isset($this->wcfg[$world])) return false; // Nothing to save!
-		if (!$this->getServer()->isLevelGenerated($world)) return false;
-		if (!$this->getServer()->isLevelLoaded($world)) {
+		if (!$this->getServer()->getWorldManager()->isWorldGenerated($world)) return false;
+		if (!$this->getServer()->getWorldManager()->isWorldLoaded($world)) {
 			$path = $this->getServer()->getDataPath()."worlds/".$world."/";
 		} else {
-			$level = $this->getServer()->getLevelByName($world);
+			$level = $this->getServer()->getWorldManager()->getWorldByName($world);
 			if (!$level) return false;
 			$path = $level->getProvider()->getPath();
 		}
@@ -132,7 +122,7 @@ class Main extends BasicPlugin implements CommandExecutor,Listener {
 	}
 	public function unloadCfg($world) {
 
-		if ($world instanceof Level) $world = $world->getName();
+		if ($world instanceof Level) $world = $world->getFolderName();
 		if (isset($this->wcfg[$world])) unset($this->wcfg[$world]);
 		foreach ($this->modules as $i=>$mod) {
 			if (!($mod instanceof BaseWp)) continue;
@@ -140,8 +130,8 @@ class Main extends BasicPlugin implements CommandExecutor,Listener {
 		}
 	}
 	public function getCfg($world,$key,$default) {
-		if ($world instanceof Level) $world = $world->getName();
-		if ($this->getServer()->isLevelLoaded($world))
+		if ($world instanceof Level) $world = $world->getFolderName();
+		if ($this->getServer()->getWorldManager()->isWorldLoaded($world))
 			$unload = false;
 		else {
 			$unload = true;
@@ -156,8 +146,8 @@ class Main extends BasicPlugin implements CommandExecutor,Listener {
 		return $res;
 	}
 	public function setCfg($world,$key,$value) {
-		if ($world instanceof Level) $world = $world->getName();
-		if ($this->getServer()->isLevelLoaded($world))
+		if ($world instanceof Level) $world = $world->getFolderName();
+		if ($this->getServer()->getWorldManager()->isWorldLoaded($world))
 			$unload = false;
 		else {
 			$unload = true;
@@ -176,8 +166,8 @@ class Main extends BasicPlugin implements CommandExecutor,Listener {
 		return true;
 	}
 	public function unsetCfg($world,$key) {
-		if ($world instanceof Level) $world = $world->getName();
-		if ($this->getServer()->isLevelLoaded($world))
+		if ($world instanceof Level) $world = $world->getFolderName();
+		if ($this->getServer()->getWorldManager()->isWorldLoaded($world))
 			$unload = false;
 		else {
 			$unload = true;
@@ -200,11 +190,11 @@ class Main extends BasicPlugin implements CommandExecutor,Listener {
 	// Event handlers
 	//
 	//////////////////////////////////////////////////////////////////////
-	public function onLevelLoad(LevelLoadEvent $e) {
-		$this->loadCfg($e->getLevel());
+	public function onLevelLoad(WorldLoadEvent $e) {
+		$this->loadCfg($e->getWorld());
 	}
-	public function onLevelUnload(LevelUnloadEvent $e) {
-		$this->unloadCfg($e->getLevel());
+	public function onLevelUnload(WorldUnloadEvent $e) {
+		$this->unloadCfg($e->getWorld());
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -215,16 +205,16 @@ class Main extends BasicPlugin implements CommandExecutor,Listener {
 	public function onCommand(CommandSender $sender, Command $cmd, string $label, array $args) : bool {
 		if ($cmd->getName() != "worldprotect") return false;
 		if ($sender instanceof Player) {
-			$world = $sender->getLevel()->getName();
+			$world = $sender->getWorld()->getFolderName();
 		} else {
-			$level = $this->getServer()->getDefaultLevel();
+			$level = $this->getServer()->getWorldManager()->getDefaultWorld();
 			if ($level) {
-				$world = $level->getName();
+				$world = $level->getFolderName();
 			} else {
 				$world = null;
 			}
 		}
-		if (isset($args[0]) && $this->getServer()->isLevelGenerated($args[0])) {
+		if (isset($args[0]) && $this->getServer()->getWorldManager()->isWorldGenerated($args[0])) {
 			$world = array_shift($args);
 		}
 		if ($world === null) {

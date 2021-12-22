@@ -17,7 +17,7 @@ use pocketmine\command\CommandSender;
 use pocketmine\command\Command;
 
 use pocketmine\event\player\PlayerCommandPreprocessEvent;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use aliuly\worldprotect\common\mc;
 
 class BanCmd extends BaseWp implements Listener {
@@ -84,7 +84,7 @@ class BanCmd extends BaseWp implements Listener {
 
 		if ($ev->isCancelled()) return;
 		$pl = $ev->getPlayer();
-		$world = $pl->getLevel()->getName();
+		$world = $pl->getWorld()->getFolderName();
 		if (!isset($this->wcfg[$world])) return;
 		$cmdline = trim($ev->getMessage());
 		if ($cmdline == "") return;
@@ -92,6 +92,6 @@ class BanCmd extends BaseWp implements Listener {
 		$cmd = strtolower($cmdline[0]);
 		if (!isset($this->wcfg[$world][$cmd])) return;
 		$pl->sendMessage(mc::_("That command is banned here!"));
-		$ev->setCancelled();
+		$ev->cancel();
 	}
 }

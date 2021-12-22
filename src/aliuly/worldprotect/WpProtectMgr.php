@@ -39,7 +39,7 @@ use pocketmine\plugin\PluginBase as Plugin;
 use pocketmine\event\Listener;
 use pocketmine\command\CommandSender;
 use pocketmine\command\Command;
-use pocketmine\Player;
+use pocketmine\player\Player;
 
 use pocketmine\block\Block;
 use pocketmine\event\block\BlockBreakEvent;
@@ -125,7 +125,7 @@ class WpProtectMgr extends BaseWp implements Listener {
 	}
 
 	protected function checkBlockPlaceBreak(Player $p) {
-		$world = $p->getLevel()->getName();
+		$world = $p->getWorld()->getFolderName();
 		if (!isset($this->wcfg[$world])) return true;
 		if ($this->wcfg[$world] != "protect") return false; // LOCKED!
 		return $this->owner->canPlaceBreakBlock($p,$world);
@@ -136,7 +136,7 @@ class WpProtectMgr extends BaseWp implements Listener {
 		$pl = $ev->getPlayer();
 		if ($this->checkBlockPlaceBreak($pl)) return;
 		$this->owner->msg($pl,mc::_("You are not allowed to do that here"));
-		$ev->setCancelled();
+		$ev->cancel();
 	}
 
 	public function onBlockPlace(BlockPlaceEvent $ev){
@@ -144,6 +144,6 @@ class WpProtectMgr extends BaseWp implements Listener {
 		$pl = $ev->getPlayer();
 		if ($this->checkBlockPlaceBreak($pl)) return;
 		$this->owner->msg($pl,mc::_("You are not allowed to do that here"));
-		$ev->setCancelled();
+		$ev->cancel();
 	}
 }

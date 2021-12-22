@@ -31,7 +31,7 @@ use pocketmine\plugin\PluginBase as Plugin;
 use pocketmine\event\Listener;
 use pocketmine\command\CommandSender;
 use pocketmine\command\Command;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use aliuly\worldprotect\common\mc;
 
 use pocketmine\event\player\PlayerMoveEvent;
@@ -67,7 +67,7 @@ class WpBordersMgr extends BaseWp implements Listener {
 				$this->owner->getServer()->broadcastMessage(mc::_("[WP] Border for %1% removed",$world));
 				return true;
 			}
-			if (!$this->owner->getServer()->isLevelLoaded($world)) {
+			if (!$this->owner->getServer()->getWorldManager()->isWorldLoaded($world)) {
 				if (!$this->owner->getServer()->loadLevel($world)) {
 					$c->sendMessage(mc::_("Error loading level %1%",$world));
 					return true;
@@ -75,7 +75,7 @@ class WpBordersMgr extends BaseWp implements Listener {
 				$unload = true;
 			} else
 				$unload = false;
-			$l = $this->owner->getServer()->getLevelByName($world);
+			$l = $this->owner->getServer()->getWorldManager()->getWorldByName($world);
 			if (!$l) {
 				$c->sendMessage(mc::_("Unable to find level %1%",$world));
 				return true;
@@ -113,10 +113,10 @@ class WpBordersMgr extends BaseWp implements Listener {
 		if ($ev->isCancelled()) return;
 		$pl = $ev->getPlayer();
 		$pos = $ev->getTo();
-		if ($this->checkMove($pl->getLevel()->getName(),
+		if ($this->checkMove($pl->getWorld()->getFolderName(),
 									$pos->getX(),$pos->getZ())) return;
 		$this->owner->msg($pl,mc::_("You have reached the end of the world"));
-		$ev->setCancelled();
+		$ev->cancel();
 	}
 
 	public function onTeleport(EntityTeleportEvent $ev){
@@ -125,17 +125,17 @@ class WpBordersMgr extends BaseWp implements Listener {
 		if (!($pl instanceof Player)) return;
 		$to = clone $ev->getTo();
 		if (!$to) return;// This should never happen!
-		if ($to->getLevel()) {
-			$world = $to->getLevel()->getName();
+		if ($to->getWorld()) {
+			$world = $to->getWorld()->getFolderName();
 		} else {
 			$from = $ev->getFrom();
 			if (!$from) return; // OK, this would be weird...
-			if (!$from->getLevel()) return; // Can't determine the level at all!
-			$world = $from->getLevel()->getName();
+			if (!$from->getWorld()) return; // Can't determine the level at all!
+			$world = $from->getWorld()->getFolderName();
 		}
 		if ($this->checkMove($world,$to->getX(),$to->getZ())) return;
 		$this->owner->msg($pl,mc::_("You are teleporting outside the world"));
-		$ev->setCancelled();
+		$ev->cancel();
 	}
 
 }

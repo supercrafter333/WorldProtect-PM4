@@ -20,7 +20,7 @@ use pocketmine\command\Command;
 
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 use aliuly\worldprotect\common\mc;
 
@@ -72,14 +72,14 @@ class WpPvpMgr extends BaseWp implements Listener {
 		if(!($ev instanceof EntityDamageByEntityEvent)) return;
 		if (!(($pl = $ev->getEntity()) instanceof Player
 				&& $ev->getDamager() instanceof Player)) return;
-		$world = $pl->getLevel()->getName();
+		$world = $pl->getWorld()->getFolderName();
 		if (!isset($this->wcfg[$world])) return;
 		if ($this->wcfg[$world] !== false) {
-			$sp = $pl->getLevel()->getSpawnLocation();
+			$sp = $pl->getWorld()->getSpawnLocation();
 			$dist = $sp->distance($pl);
 			if ($dist > $this->owner->getServer()->getSpawnRadius()) return;
 		}
 		$this->owner->msg($ev->getDamager(),mc::_("You are not allowed to do that here"));
-		$ev->setCancelled();
+		$ev->cancel();
 	}
 }
