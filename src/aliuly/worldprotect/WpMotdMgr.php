@@ -31,6 +31,7 @@
 
 namespace aliuly\worldprotect;
 
+use pocketmine\event\entity\EntityTeleportEvent;
 use pocketmine\plugin\PluginBase as Plugin;
 use pocketmine\command\CommandSender;
 use pocketmine\command\Command;
@@ -38,8 +39,7 @@ use pocketmine\command\CommandExecutor;
 use pocketmine\event\Listener;
 
 use pocketmine\event\player\PlayerJoinEvent;
-use pocketmine\event\entity\EntityLevelChangeEvent;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use aliuly\worldprotect\common\PluginCallbackTask;
 use aliuly\worldprotect\common\mc;
 use pocketmine\Server;
@@ -76,7 +76,7 @@ class WpMotdMgr extends BaseWp implements Listener, CommandExecutor {
 	public function onCommand(CommandSender $sender, Command $cmd, string $label, array $args) : bool{
 		if ($cmd->getName() != "motd") return false;
 		if ($sender instanceof Player) {
-			$world = $sender->getLevel()->getName();
+			$world = $sender->getWorld()->getFolderName();
 		} else {
 			$level = $this->owner->getServer()->getDefaultLevel();
 			if ($level) {
@@ -85,7 +85,7 @@ class WpMotdMgr extends BaseWp implements Listener, CommandExecutor {
 				$world = null;
 			}
 		}
-		if (isset($args[0]) && $this->owner->getServer()->isLevelGenerated($args[0])) {
+		if (isset($args[0]) && $this->owner->getServer()->getWorldManager()->isWorldGenerated($args[0])) {
 			$world = array_shift($args);
 		}
 		if ($world === null) {
@@ -134,13 +134,18 @@ class WpMotdMgr extends BaseWp implements Listener, CommandExecutor {
 	public function onJoin(PlayerJoinEvent $ev) {
 		if (!$this->auto) return;
 		$pl = $ev->getPlayer();
-		$this->showMotd($pl,$pl->getLevel()->getName());
+		$this->showMotd($pl,$pl->getWorld()->getFolderName());
 	}
-	public function onLevelChange(EntityLevelChangeEvent $ev) {
-		if (!$this->auto) return;
-		$pl = $ev->getEntity();
-		if (!($pl instanceof Player)) return;
-		$level = $ev->getTarget()->getName();
-		$this->showMotd($pl,$level);
+	public function onLevelChange(EntityTeleportEvent $ev)
+    {
+        if ($ev->getFrom()->getWorld()->getFolderName() !== $ev->getTo()->getWorld()->getFolderName()) {
+
+            if (!$this->auto) return;
+            $pl = $ev->getEntity();
+            if (!($pl instanceof Player)) return;
+            $level = $ev->getEntity()->getWorld()->getFolderName();
+            $this->showMotd($pl, $level);
+
+        }
 	}
 }

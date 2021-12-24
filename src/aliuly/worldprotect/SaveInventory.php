@@ -8,12 +8,13 @@
 
 namespace aliuly\worldprotect;
 
+use pocketmine\player\GameMode;
 use pocketmine\plugin\PluginBase as Plugin;
 use pocketmine\event\Listener;
 use pocketmine\item\Item;
 use pocketmine\event\player\PlayerDeathEvent;
 use pocketmine\event\player\PlayerGameModeChangeEvent;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\ListTag;
 
@@ -32,7 +33,7 @@ class SaveInventory extends BaseWp implements Listener {
 	}
 
 	public function loadInv(Player $player) {
-		$inventoryTag = $player->namedtag->getListTag("SurvivalInventory");
+		$inventoryTag = $player->getSaveData()->getListTag("SurvivalInventory");
 		if(!isset($inventoryTag)) {
 			if(self::DEBUG) Server::getInstance()->getLogger()->info("[WP Inventory] SurvivalInventory Not Found");
 			return;
@@ -41,7 +42,7 @@ class SaveInventory extends BaseWp implements Listener {
 			/** @var CompoundTag $item */
 			foreach($inventoryTag as $i => $item){
 				$slot = $item->getByte("Slot");
-				if($slot >= 0 and $slot < 9){ //Hotbar
+				if ($slot >= 0 and $slot < 9){ //Hotbar
 					//Old hotbar saving stuff, ignore it
 				}elseif($slot >= 100 and $slot < 104){ //Armor
 					$player->getArmorInventory()->setItem($slot - 100, Item::nbtDeserialize($item));
@@ -55,8 +56,8 @@ class SaveInventory extends BaseWp implements Listener {
 
 	public function saveInv(Player $player) {
 		$player->save();
-		$inventoryTag = $player->namedtag->getListTag("Inventory");
-		$player->namedtag->setTag(new ListTag("SurvivalInventory", $inventoryTag->getAllValues()), true);
+		$inventoryTag = $player->getSaveData()->getListTag("Inventory");
+		$player->getSaveData()->setTag("SurvivalInventory", new ListTag($inventoryTag->getAllValues()));
 		$player->save();
 	}
 
@@ -65,11 +66,11 @@ class SaveInventory extends BaseWp implements Listener {
 		$player = $ev->getPlayer();
 		$newgm = $ev->getNewGamemode();
 		$oldgm = $player->getGamemode();
-		if(self::DEBUG) Server::getInstance()->getLogger()->info("[WP Inventory] Changing GM from $oldgm to $newgm...");
-		if(($newgm == Player::CREATIVE || $newgm == Player::SPECTATOR) && ($oldgm == Player::SURVIVAL || $oldgm == Player::ADVENTURE)) {// We need to save inventory
+		if(self::DEBUG) Server::getInstance()->getLogger()->info("[WP Inventory] Changing GM from " . $oldgm->name() . " to " . $newgm->name() . "...");
+		if(($newgm == GameMode::CREATIVE() || $newgm == GameMode::SPECTATOR()) && ($oldgm == GameMode::SURVIVAL() || $oldgm == GameMode::ADVENTURE())) {// We need to save inventory
 			$this->saveInv($player);
-			if(self::DEBUG) Server::getInstance()->getLogger()->info("[WP Inventory] Saved Inventory from GM $oldgm to $newgm");
-		} elseif(($newgm == Player::SURVIVAL || $newgm == Player::ADVENTURE) && ($oldgm == Player::CREATIVE || $oldgm == Player::SPECTATOR)) {
+			if(self::DEBUG) Server::getInstance()->getLogger()->info("[WP Inventory] Saved Inventory from GM  " . $oldgm->name() . " to " . $newgm->name() . ".");
+		} elseif(($newgm == GameMode::SURVIVAL() || $newgm == GameMode::ADVENTURE()) && ($oldgm == GameMode::CREATIVE() || $oldgm == GameMode::SPECTATOR())) {
 			if(self::DEBUG) $this->owner->getServer()->getLogger()->info("[WP Inventory] GM Change - Clear Player Inventory and load SurvivalInventory...");
 			$player->getInventory()->clearAll();
 			// Need to restore inventory (but later!)

@@ -66,14 +66,14 @@ class NoExplodeMgr extends BaseWp implements Listener {
 		//echo __METHOD__.",".__LINE__."\n";
 		if ($ev->isCancelled()) return;
 		$et = $ev->getEntity();
-		$world = $et->getLevel()->getName();
+		$world = $et->getWorld()->getFolderName();
 		if (!isset($this->wcfg[$world])) return;
 		if ($this->wcfg[$world] == "spawn") {
-			$sp = $et->getLevel()->getSpawnLocation();
+			$sp = $et->getWorld()->getSpawnLocation();
 			$dist = $sp->distance($et);
 			if ($dist > $this->owner->getServer()->getSpawnRadius()) return;
 		}
-		$ev->setCancelled();
+		$ev->cancel();
 		$this->owner->getLogger()->notice(TextFormat::RED.
 												  mc::_("Explosion was stopped in %1%",$world));
 	}

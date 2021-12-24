@@ -31,7 +31,7 @@ class WpList extends BaseWp {
 		return false;
 	}
 	private function wpDetails(CommandSender $c,$world,$pageNumber) {
-		if (!$this->owner->getServer()->isLevelGenerated($world)) {
+		if (!$this->owner->getServer()->getWorldManager()->isWorldGenerated($world)) {
 			$c->sendMessage(mc::_("World %1% does not exist",$world));
 			return;
 		}
@@ -145,7 +145,7 @@ class WpList extends BaseWp {
 		$cnt = 0;
 		while (($world = readdir($dh)) !== false) {
 			if ($world == '.' || $world == '..') continue;
-			if (!$this->owner->getServer()->isLevelGenerated($world)) continue;
+			if (!$this->owner->getServer()->getWorldManager()->isWorldGenerated($world)) continue;
 			$f = "$dir$world/wpcfg.yml";
 			if (is_file($f)) {
 				$attrs=$this->attrList((new Config($f,Config::YAML))->getAll());

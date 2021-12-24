@@ -3,6 +3,7 @@ namespace aliuly\worldprotect\common;
 //= api-features
 //: - Config shortcuts and multi-module|feature management
 
+use pocketmine\player\Player;
 use pocketmine\plugin\PluginBase;
 use pocketmine\command\CommandSender;
 use pocketmine\command\Command;
@@ -26,10 +27,10 @@ abstract class BasicPlugin extends PluginBase {
 	/**
 	 * Given some defaults, this will load optional features
 	 *
-	 * @param str $ns - namespace used to search for classes to load
+	 * @param string $ns - namespace used to search for classes to load
 	 * @param array $mods - optional module definition
 	 * @param array $defaults - default options to use for config.yml
-	 * @param str $xhlp - optional help format.
+	 * @param string $xhlp - optional help format.
 	 * @return array
 	 */
 	protected function modConfig($ns,$mods,$defaults,$xhlp="") : array{
@@ -84,7 +85,7 @@ abstract class BasicPlugin extends PluginBase {
 	}
   /**
 	 * Get module
-	 * @param str $module - module to retrieve
+	 * @param string $module - module to retrieve
 	 * @return mixed|null
 	 */
 	public function getModule($str) {
@@ -101,7 +102,7 @@ abstract class BasicPlugin extends PluginBase {
 	/**
 	 * Save a config section to the plugins' config.yml
 	 *
-	 * @param str $key - section to save
+	 * @param string $key - section to save
 	 * @param mixed $settings - settings to save
 	 */
 	public function cfgSave($key,$settings) {
@@ -129,7 +130,7 @@ abstract class BasicPlugin extends PluginBase {
 	}
 	/**
 	 * Register a sub command
-	 * @param str $cmd - sub command
+	 * @param string $cmd - sub command
 	 * @param callable $callable - callable to execute
 	 * @param array $opts - additional options
 	 */
@@ -142,8 +143,8 @@ abstract class BasicPlugin extends PluginBase {
 	/**
 	 * Get a player state for the desired module/$label.
 	 *
-	 * @param str $label - state variable to get
-	 * @param Player|str $player - Player instance or name
+	 * @param string $label - state variable to get
+	 * @param Player|string $player - Player instance or name
 	 * @param mixed $default - default value to return is no state found
 	 * @return mixed
 	 */
@@ -154,8 +155,8 @@ abstract class BasicPlugin extends PluginBase {
 	/**
 	 * Set a player related state
 	 *
-	 * @param str $label - state variable to set
-	 * @param Player|str $player - player instance or their name
+	 * @param string $label - state variable to set
+	 * @param Player|string $player - player instance or their name
 	 * @param mixed $val - value to set
 	 * @return mixed
 	 */
@@ -166,8 +167,8 @@ abstract class BasicPlugin extends PluginBase {
 	/**
 	 * Clears a player related state
 	 *
-	 * @param str $label - state variable to clear
-	 * @param Player|str $player - instance of Player or their name
+	 * @param string $label - state variable to clear
+	 * @param Player|string $player - instance of Player or their name
 	 */
 	public function unsetState($label,$player) {
 		if ($this->session === null) return;

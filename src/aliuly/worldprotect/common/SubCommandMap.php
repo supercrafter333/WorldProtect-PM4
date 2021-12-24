@@ -54,7 +54,7 @@ class SubCommandMap {
   }
   /**
 	 * Register a sub command
-	 * @param str $cmd - sub command
+	 * @param string $cmd - sub command
 	 * @param callable $callable - callable to execute
 	 * @param array $opts - additional options
 	 */

@@ -12,6 +12,9 @@
 //: * Unbreakable blocks
 namespace aliuly\worldprotect;
 
+use pocketmine\data\bedrock\LegacyItemIdToStringIdMap;
+use pocketmine\item\ItemFactory;
+use pocketmine\item\StringToItemParser;
 use pocketmine\plugin\PluginBase as Plugin;
 use pocketmine\event\Listener;
 use pocketmine\command\CommandSender;
@@ -19,7 +22,7 @@ use pocketmine\command\Command;
 
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\item\Item;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use aliuly\worldprotect\common\mc;
 use aliuly\worldprotect\common\ItemName;
 
@@ -58,7 +61,7 @@ class Unbreakable extends BaseWp implements Listener {
 		$ids = $this->owner->getCfg($world, "unbreakable", []);
 		if ($scmd == "breakable") {
 			foreach ($args as $i) {
-				$item = Item::fromString($i);
+				$item = StringToItemParser::getInstance()->parse($i);
 				if (isset($ids[$item->getId()])) {
 					unset($ids[$item->getId()]);
 					++$cc;
@@ -66,7 +69,7 @@ class Unbreakable extends BaseWp implements Listener {
 			}
 		} elseif ($scmd == "unbreakable") {
 			foreach ($args as $i) {
-				$item = Item::fromString($i);
+				$item = StringToItemParser::getInstance()->parse($i);
 				if (isset($ids[$item->getId()])) continue;
 				$ids[$item->getId()] = ItemName::str($item);
 				++$cc;
@@ -89,11 +92,11 @@ class Unbreakable extends BaseWp implements Listener {
 	public function onBlockBreak(BlockBreakEvent $ev){
 		if ($ev->isCancelled()) return;
 		$bl = $ev->getBlock();
-		$world = $bl->getLevel()->getName();
+		$world = $bl->getPosition()->getWorld()->getFolderName();
 		if (!isset($this->wcfg[$world])) return;
 		if (!isset($this->wcfg[$world][$bl->getId()])) return;
 		$pl = $ev->getPlayer();
 		$pl->sendMessage(mc::_("It can not be broken!"));
-		$ev->setCancelled();
+		$ev->cancel();
 	}
 }

@@ -42,10 +42,11 @@ class PluginCallbackTask extends Task{
 		return $this->callable;
 	}
 
-	public function onRun(int $currentTicks){
+	public function onRun(): void
+    {
 		$c = $this->callable;
 		$args = $this->args;
-		$args[] = $currentTicks;
+		$args[] = $this->getHandler()->getPeriod();
 		$c(...$args);
 	}
 
