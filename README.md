@@ -7,7 +7,7 @@
 # WorldProtect
 
 - Summary: protect worlds from griefers, pvp, limits and borders
-- PocketMine-MP version: 1.4 (API:1.10.0), 1.5 (API:1.12.0), 1.6+php7 (API:2.0.0)
+- PocketMine-MP version: 4.0.0
 - DependencyPlugins: 
 - OptionalPlugins: 
 - Categories: Anti-Griefing 
