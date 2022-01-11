@@ -80,7 +80,7 @@ class GmMgr extends BaseWp implements Listener {
 			$gm = $this->owner->getServer()->getGamemode()->getEnglishName();
 		}
         $gm = GameMode::fromString($gm);
-		if ($pl->getGamemode()->getEnglishName() instanceof $gm) return;
+		if ($pl->getGamemode() instanceof $gm) return;
 		$pl->sendMessage(mc::_("Changing gamemode to %1%",
 									  MPMU::gamemodeStr($gm->getEnglishName())));
 		$pl->setGamemode($gm);
