@@ -15,6 +15,7 @@
 //: * Per world game modes
 namespace aliuly\worldprotect;
 
+use pocketmine\player\GameMode;
 use pocketmine\plugin\PluginBase as Plugin;
 use pocketmine\event\Listener;
 use pocketmine\command\CommandSender;
@@ -25,6 +26,7 @@ use aliuly\worldprotect\common\MPMU;
 use aliuly\worldprotect\common\mc;
 
 class GmMgr extends BaseWp implements Listener {
+
 	public function __construct(Plugin $plugin) {
 		parent::__construct($plugin);
 		$this->owner->getServer()->getPluginManager()->registerEvents($this, $this->owner);
@@ -46,18 +48,19 @@ class GmMgr extends BaseWp implements Listener {
 			return true;
 		}
 		if (count($args) != 1) return false;
-		$newmode = $this->owner->getServer()->getGamemodeFromString($args[0]);
-		if ($newmode === -1) {
+        $newmode = GameMode::fromString($args[0]);
+		if ($newmode === null) {
 			$this->owner->unsetCfg($world,"gamemode");
 			$this->owner->getServer()->broadcastMessage(mc::_("[WP] %1% gamemode removed", $world));
 		} else {
-			$this->owner->setCfg($world,"gamemode",$newmode);
+			$this->owner->setCfg($world,"gamemode",$newmode->getEnglishName());
 			$this->owner->getServer()->broadcastMessage(mc::_("[WP] %1% gamemode set to %2%",
 																			  $world,
-																			  MPMU::gamemodeStr($newmode)));
+																			  $newmode->getEnglishName()));
 		}
 		return true;
 	}
+
 	/**
 	 * @priority HIGHEST
 	 */
@@ -74,11 +77,12 @@ class GmMgr extends BaseWp implements Listener {
 		$world = $world->getFolderName();
 		$gm = $this->owner->getCfg($world,"gamemode",null);
 		if ($gm === null) {
-			$gm = $this->owner->getServer()->getGamemode();
+			$gm = $this->owner->getServer()->getGamemode()->getEnglishName();
 		}
-		if ($pl->getGamemode() == $gm) return;
+        $gm = GameMode::fromString($gm);
+		if ($pl->getGamemode()->getEnglishName() instanceof $gm) return;
 		$pl->sendMessage(mc::_("Changing gamemode to %1%",
-									  MPMU::gamemodeStr($gm)));
+									  MPMU::gamemodeStr($gm->getEnglishName())));
 		$pl->setGamemode($gm);
 	}
 }
