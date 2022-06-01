@@ -20,9 +20,9 @@ use aliuly\worldprotect\common\SubCommandMap;
  * Simple extension to the PocketMine PluginBase class
  */
 abstract class BasicPlugin extends PluginBase {
-	protected $modules;
-	protected $scmdMap;
-	protected $session;
+	protected array $modules;
+	protected SubCommandMap $scmdMap;
+	protected Session|null $session;
 
 	/**
 	 * Given some defaults, this will load optional features

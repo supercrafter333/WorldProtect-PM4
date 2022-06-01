@@ -27,7 +27,7 @@ use pocketmine\plugin\Plugin;
  */
 abstract class mc {
 	/** @var string[] $txt Message translations */
-	public static $txt = [];
+	public static array $txt = [];
 	/** Main translation function
 	 *
 	 * This translates strings.  The naming of "_" is to make it compatible

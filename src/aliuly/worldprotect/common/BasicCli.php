@@ -16,13 +16,10 @@ use pocketmine\utils\TextFormat;
  * that implement multiple commands or sub-commands
  */
 abstract class BasicCli {
-	protected $owner;
 	/**
 	 * @param BasicPlugin @owner - Plugin that owns this module
 	 */
-	public function __construct($owner) {
-		$this->owner = $owner;
-	}
+	public function __construct(protected BasicPlugin $owner) {}
   /**
 	 * Register this class as a sub-command.  See BasicPlugin for details.
 	 *

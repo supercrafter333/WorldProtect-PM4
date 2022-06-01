@@ -4,7 +4,7 @@ namespace aliuly\worldprotect;
 use aliuly\worldprotect\common\BasicCli;
 
 abstract class BaseWp extends BasicCli {
-	protected $wcfg;
+	protected array $wcfg;
 
 	public function __construct($owner) {
 		parent::__construct($owner);

@@ -12,14 +12,12 @@ use aliuly\worldprotect\common\BasicCli;
  * Implements simple help functionality for sub-commands
  */
 class BasicHelp extends BasicCli {
-	protected $fmt;
 	/**
 	 * @param PluginBase $owner - plugin that owns this command
 	 */
-	public function __construct($owner,$fmt = "/%s %s %s") {
+	public function __construct($owner,protected string $fmt = "/%s %s %s") {
 		parent::__construct($owner);
 		$this->enableSCmd("help",["aliases"=>["?"]]);
-		$this->fmt = $fmt;
 	}
 	/**
 	 * Entry point for sub-commands.  Will show the help or usage messages

@@ -68,7 +68,7 @@ class WpBordersMgr extends BaseWp implements Listener {
 				return true;
 			}
 			if (!$this->owner->getServer()->getWorldManager()->isWorldLoaded($world)) {
-				if (!$this->owner->getServer()->loadLevel($world)) {
+				if (!$this->owner->getServer()->getWorldManager()->loadWorld($world)) {
 					$c->sendMessage(mc::_("Error loading level %1%",$world));
 					return true;
 				}
@@ -81,7 +81,7 @@ class WpBordersMgr extends BaseWp implements Listener {
 				return true;
 			}
 			$pos = $l->getSpawnLocation();
-			if ($unload) $this->owner->getServer()->unloadLevel($l);
+			if ($unload) $this->owner->getServer()->getWorldManager()->unloadWorld($l);
 			$args = [ $pos->getX() - $range, $pos->getZ() - $range,
 						 $pos->getX() + $range, $pos->getZ() + $range ];
 

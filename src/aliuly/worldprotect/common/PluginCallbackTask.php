@@ -21,24 +21,20 @@ class PluginCallbackTask extends Task{
 	/** @var callable */
 	protected $callable;
 
-	/** @var array */
-	protected $args;
-
 	/**
 	 * @param Plugin   $owner
 	 * @param callable $callable
 	 * @param array    $args
 	 */
-	public function __construct(Plugin $owner, callable $callable, array $args = []){
-		$this->plugin = $owner;
+	public function __construct(private Plugin $owner, callable $callable, protected array $args = []){
 		$this->callable = $callable;
-		$this->args = $args;
 		$this->args[] = $this;
 	}
 	/**
 	 * @return callable
 	 */
-	public function getCallable(){
+	public function getCallable(): callable
+    {
 		return $this->callable;
 	}
 
