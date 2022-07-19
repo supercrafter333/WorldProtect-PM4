@@ -20,22 +20,17 @@
 
 namespace aliuly\worldprotect;
 
-use pocketmine\data\bedrock\LegacyItemIdToStringIdMap;
-use pocketmine\item\ItemFactory;
-use pocketmine\item\ItemIds;
-use pocketmine\item\StringToItemParser;
-use pocketmine\plugin\PluginBase as Plugin;
-use pocketmine\event\Listener;
-use pocketmine\command\CommandSender;
+use aliuly\worldprotect\common\ItemName;
+use aliuly\worldprotect\common\mc;
 use pocketmine\command\Command;
-
+use pocketmine\command\CommandSender;
+use pocketmine\event\block\BlockPlaceEvent;
+use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerItemConsumeEvent;
-use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\item\Item;
-use pocketmine\player\Player;
-use aliuly\worldprotect\common\mc;
-use aliuly\worldprotect\common\ItemName;
+use pocketmine\item\StringToItemParser;
+use pocketmine\plugin\PluginBase as Plugin;
 
 class BanItem extends BaseWp implements Listener {
 	public function __construct(Plugin $plugin) {
@@ -80,7 +75,7 @@ class BanItem extends BaseWp implements Listener {
 		} elseif ($scmd == "banitem") {
 			foreach ($args as $i) {
 				$item = StringToItemParser::getInstance()->parse($i);
-				if (isset($ids[$item->getId()])) continue;
+				if ($item instanceof Item && isset($ids[$item->getId()])) continue;
 				$ids[$item->getId()] = ItemName::str($item);
 				++$cc;
 			}
