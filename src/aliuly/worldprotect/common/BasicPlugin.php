@@ -3,26 +3,19 @@ namespace aliuly\worldprotect\common;
 //= api-features
 //: - Config shortcuts and multi-module|feature management
 
+use pocketmine\command\Command;
+use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
 use pocketmine\plugin\PluginBase;
-use pocketmine\command\CommandSender;
-use pocketmine\command\Command;
-use pocketmine\command\CommandExecutor;
-use pocketmine\utils\TextFormat;
 use pocketmine\utils\Config;
-
-use aliuly\worldprotect\common\mc;
-use aliuly\worldprotect\common\BasicHelp;
-use aliuly\worldprotect\common\Session;
-use aliuly\worldprotect\common\SubCommandMap;
 
 /**
  * Simple extension to the PocketMine PluginBase class
  */
 abstract class BasicPlugin extends PluginBase {
-	protected $modules;
-	protected $scmdMap;
-	protected $session;
+	protected array $modules;
+	protected SubCommandMap|null $scmdMap = null;
+	protected Session|null $session;
 
 	/**
 	 * Given some defaults, this will load optional features

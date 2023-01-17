@@ -19,7 +19,7 @@ use aliuly\worldprotect\common\mc;
  */
 abstract class MPMU {
 	/** @var string[] $items Nice names for items */
-	static protected $items = [];
+	static protected array $items = [];
 	/** @const string VERSION plugin version string */
 	const VERSION = "1.92.0";
 

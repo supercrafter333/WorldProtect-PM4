@@ -14,13 +14,11 @@ use aliuly\worldprotect\common\MPMU;
  * Basic Session Manager functionality
  */
 class Session implements Listener {
-  protected $plugin;
-  protected $state;
+  protected array $state;
   /**
-   * @param PluginBase $owner - plugin that owns this session
+   * @param PluginBase $plugin - plugin that owns this session
    */
-  public function __construct(PluginBase $owner) {
-    $this->plugin = $owner;
+  public function __construct(protected PluginBase $plugin) {
     $this->plugin->getServer()->getPluginManager()->registerEvents($this,$this->plugin);
     $this->state = [];
   }

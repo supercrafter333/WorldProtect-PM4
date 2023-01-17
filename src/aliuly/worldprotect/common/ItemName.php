@@ -7,12 +7,12 @@ use pocketmine\item\ItemIds;
  * ItemName database
  */
 abstract class ItemName {
-	/** @var array $xnames extended names */
-	static protected $xnames = null;
+	/** @var array|null $xnames extended names */
+	static protected array|null $xnames = null;
 	/** @var string[] $items Nice names for items */
-	static protected $items = [];
+	static protected array $items = [];
 	/** @var string[] $usrnames Possibly localized names for items */
-	static protected $usrnames = [];
+	static protected array $usrnames = [];
 	/**
 	 * Initialize $usrnames
 	 * @param string[] $names - names to load

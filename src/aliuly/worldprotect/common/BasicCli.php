@@ -21,6 +21,7 @@ abstract class BasicCli {
 	 * @param BasicPlugin @owner - Plugin that owns this module
 	 */
 	public function __construct(protected PluginBase $owner) {}
+  
   /**
 	 * Register this class as a sub-command.  See BasicPlugin for details.
 	 *
