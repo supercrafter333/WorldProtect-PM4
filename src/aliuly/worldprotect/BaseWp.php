@@ -2,11 +2,12 @@
 namespace aliuly\worldprotect;
 
 use aliuly\worldprotect\common\BasicCli;
+use pocketmine\plugin\PluginBase;
 
 abstract class BaseWp extends BasicCli {
 	protected $wcfg;
 
-	public function __construct($owner) {
+	public function __construct(PluginBase $owner) {
 		parent::__construct($owner);
 		$this->wcfg = [];
 	}

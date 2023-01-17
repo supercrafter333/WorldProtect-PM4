@@ -9,6 +9,7 @@ use pocketmine\command\CommandSender;
 use pocketmine\command\PluginCommand;
 use pocketmine\console\ConsoleCommandSender;
 
+use pocketmine\plugin\PluginBase;
 use pocketmine\utils\TextFormat;
 
 /**
@@ -16,13 +17,10 @@ use pocketmine\utils\TextFormat;
  * that implement multiple commands or sub-commands
  */
 abstract class BasicCli {
-	protected $owner;
 	/**
 	 * @param BasicPlugin @owner - Plugin that owns this module
 	 */
-	public function __construct($owner) {
-		$this->owner = $owner;
-	}
+	public function __construct(protected PluginBase $owner) {}
   /**
 	 * Register this class as a sub-command.  See BasicPlugin for details.
 	 *
