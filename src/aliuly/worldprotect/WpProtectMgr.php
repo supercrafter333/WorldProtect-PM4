@@ -73,7 +73,7 @@ class WpProtectMgr extends BaseWp implements Listener {
 			case "add":
 				if (!count($args)) return false;
 				foreach ($args as $i) {
-					$player = $this->owner->getServer()->getPlayerExact($i);
+					$player = $this->owner->getServer()->getPlayerByPrefix($i);
 					if (!$player) {
 						$player = $this->owner->getServer()->getOfflinePlayer($i);
 						if ($player == null || !$player->hasPlayedBefore()) {
@@ -96,7 +96,7 @@ class WpProtectMgr extends BaseWp implements Listener {
 					if ($this->owner->authCheck($world,$iusr)) {
 						$this->owner->authRm($world,$iusr);
 						$c->sendMessage(mc::_("[WP] %1% removed from %2%'s auth list",$i,$world));
-						$player = $this->owner->getServer()->getPlayerExact($i);
+						$player = $this->owner->getServer()->getPlayerByPrefix($i);
 						if ($player) {
 							$player->sendMessage(mc::_("[WP] You have been removed from\n[WP] %1%'s auth list", $world));
 						}

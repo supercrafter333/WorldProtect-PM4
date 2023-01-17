@@ -62,6 +62,7 @@ class GmMgr extends BaseWp implements Listener {
 		}
 		return true;
 	}
+
 	/**
 	 * @priority HIGHEST
 	 */
