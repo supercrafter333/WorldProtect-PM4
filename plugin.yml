@@ -4,7 +4,7 @@ load: STARTUP
 
 name: WorldProtect
 description: protect worlds from griefers, pvp, limits and borders
-version: 2.3.15
+version: 2.3.16
 author: aliuly
 website: https://github.com/Muirfield/pocketmine-plugins/tree/master/WorldProtect
 
